@@ -1,0 +1,74 @@
+<launch>
+  
+  <!--Setting up the robot name for different robots-->
+  <arg name="robot_name" default="abb_robot_1"/>
+  <!--Setting up robot description for the current robot-->
+  <arg name="robot_description" default="robot_description"/>
+
+  <!-- By default, we do not start a database (it can be large) -->
+  <arg name="db" default="false" />
+  <!-- Allow user to specify database location -->
+  <arg name="db_path" default="$(find abb_irb1200_5_90_moveit_config)/default_warehouse_mongo_db" />
+
+  <!-- By default, we are not in debug mode -->
+  <arg name="debug" default="false" />
+
+  
+  <!--By default, hide joint_state_publisher's GUI-->
+  <arg name="use_gui" default="false" />
+
+  <!-- <remap from="/move_group/fake_controller_joint_states" to="/$(arg robot_name)/move_group/fake_controller_joint_states" /> 
+  <remap from="/move_group/get_planning_scene" to="/$(arg robot_name)/move_group/get_planning_scene" />
+  <remap from="/move_group/apply_planning_scene" to="/$(arg robot_name)/move_group/apply_planning_scene" />
+  <remap from="/move_group/motion_plan" to="/$(arg robot_name)/move_group/motion_plan" />
+  <remap from="/move_group/move_action" to="/$(arg robot_name)/move_group/move_action" />
+  <remap from="/move_group/execute_trajectory" to="/$(arg robot_name)/move_group/execute_trajectory" /> -->
+
+
+
+
+<!--Put in a namespace to allow many instances to run-->
+  <group ns="$(arg robot_name)" >
+
+
+    <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+    <include file="$(find abb_irb1200_5_90_moveit_config)/launch/planning_context.launch">
+      <arg name="load_robot_description" value="true"/>
+      <arg name="robot_name" value="$(arg robot_name)"/>
+      <!-- <arg name="robot_description" value="$(arg robot_description)"/> -->
+    </include>
+
+    <!-- If needed, broadcast static tf for robot root -->
+    <node pkg="tf" type="static_transform_publisher" name="$(arg robot_name)" args="-0.8 0 0 0 0 0 world $(arg robot_name)/base_link 30" />
+
+    <!-- We do not have a robot connected, so publish fake joint states -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+      <param name="/use_gui" value="$(arg use_gui)"/>
+      <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
+    </node>
+
+    <!-- Given the published joint states, publish tf for the robot links -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+
+    <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
+    <include file="$(find abb_irb1200_5_90_moveit_config)/launch/move_group.launch">
+      <arg name="allow_trajectory_execution" value="true"/>
+      <arg name="fake_execution" value="true"/>
+      <arg name="info" value="true"/>
+      <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!-- If database loading was enabled, start mongodb as well -->
+    <include file="$(find abb_irb1200_5_90_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
+      <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
+    </include>
+
+  <node name="abb_robot1"
+        pkg="process_visualizer"
+        type="abb_rob1_move_group"
+        respawn="false" output="screen">  
+  </node>
+
+  </group>
+
+</launch>

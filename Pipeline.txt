@@ -1,0 +1,29 @@
+WorkFlow Pipeline:
+
+-> Getting robots working - done
+-> Picking and Placing on Table by robot 1:
+        -> Place robot 1 in appropriate position
+        -> Cart/ tray for the robot to pick up objects
+        -> Collision objects to be defined for the robot 1
+        -> Place operation on the Table
+
+-> Vision system:
+        -> Scanning of part
+        -> Sending trajectories based on scan
+
+->Pick and Place for Robot 2:
+        -> Pick object from the table
+        -> Bins/ tray to place objects
+        -> Table to place for milling.
+
+ROS architecture:
+
+-> Process controller to control the WorkFlow of the Process and sending trajectories to the robots
+-> Planning groups and trajectories for each robot
+-> Collision object definition :::: Main issue
+
+
+How to:
+
+-> Everyday 1 hour till 30th to complete these things
+-> Working till 10th to complete milling and integration
