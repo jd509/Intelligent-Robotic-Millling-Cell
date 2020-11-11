@@ -1,9 +1,0 @@
-controller_list:
-  - name: fake_robot3_manipulator_controller
-    joints:
-      - abb_robot_3/joint_1
-      - abb_robot_3/joint_2
-      - abb_robot_3/joint_3
-      - abb_robot_3/joint_4
-      - abb_robot_3/joint_5
-      - abb_robot_3/joint_6
