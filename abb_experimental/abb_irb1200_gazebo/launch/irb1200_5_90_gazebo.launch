@@ -14,7 +14,7 @@
   </include>
 
   <!-- load urdf -->
-  <include file="$(find abb_irb1200_gazebo)/launch/load_irb1200_5_90.launch" />
+  <!-- <include file="$(find abb_irb1200_gazebo)/launch/load_irb1200_5_90.launch" /> -->
 
   <!-- spawn robot in gazebo -->
   <node name="abb_irb1200_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model abb_irb1200_5_90" />

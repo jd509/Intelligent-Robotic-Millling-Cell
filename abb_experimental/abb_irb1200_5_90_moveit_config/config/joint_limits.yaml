@@ -32,3 +32,4 @@ joint_limits:
     max_velocity: 10.472
     has_acceleration_limits: false
     max_acceleration: 0
+
