@@ -1,6 +1,6 @@
 # Intelligent Robotic Milling Cell
 
-This repository contains code to execute a deep-learning based robotic milling cell in ROS framework using Python and C++
+This repository contains code to execute a deep-learning based robotic milling cell in ROS framework using Python and C++.
 
 ## List of Required Dependencies
 
@@ -11,14 +11,18 @@ The following dependencies need to be installed before running the project.
 
 ## Installation
  
-Clone the repository in a folder and rename it to src. Then, type the following on a terminal:
+Clone the repository in a folder and rename it to src. For now, please clone the master branch of the repo using:
+
+```bash
+git clone -b master https://github.com/jd509/Intelligent-Robotic-Millling-Cell.git
+```
+
+Then, type the following on a terminal:
 
 ```bash
 cd YOUR_FOLDER && catkin_make -j7
 ```
 This will make the project. 
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
 ## Usage
 
@@ -34,7 +38,7 @@ This will start the gazebo with the needed controllers. The initial PID gain hav
 
 The gazebo window should display two robots as follows:
 
-![Gazebo World](/src/images/gazebo_initial_image.png)
+![Gazebo World](https://github.com/jd509/Intelligent-Robotic-Millling-Cell/blob/master/images/gazebo_initial_image.png)
 
 
 Now, open another terminal alongside the gazebo and type the following:
