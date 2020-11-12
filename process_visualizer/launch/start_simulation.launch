@@ -15,10 +15,13 @@
     <arg name="gui" value="$(arg gui)"/>
   </include>
 
+<!-- Spawn a robot into Gazebo -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_table.urdf -urdf -x 0.87 -y 0.87 -z 0.005 -model robot_table" />
+
   <group ns="ur5_robot1">
     <param name="tf_prefix" value="ur5_robot1_tf" />
       <include file="$(find ur_gazebo)/launch/ur5.launch">
-        <arg name="init_pose" value="-x 1 -y 1 -z 0.2"/>
+        <arg name="init_pose" value="-x 1 -y 1 -z 0.31"/>
         <arg name="robot_name" value="ur5_robot1"/>
       </include>
     </group>
