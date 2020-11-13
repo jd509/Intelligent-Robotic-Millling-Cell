@@ -1,18 +1,23 @@
 {
-  "configurations": [
-    {
-      "browse": {
-        "databaseFilename": "",
-        "limitSymbolsToIncludedHeaders": true
-      },
-      "includePath": [
-        "/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/devel/include/**",
-        "/opt/ros/melodic/include/**",
-        "/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/src/process_visualizer/include/**",
-        "/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/src/universal_robot/ur_kinematics/include/**",
-        "/usr/include/**"
-      ],
-      "name": "ROS"
-    }
-  ]
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/src/process_visualizer/include/**",
+                "/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/src/universal_robot/ur_kinematics/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14"
+        }
+    ],
+    "version": 4
 }

@@ -1,46 +1,7 @@
 <launch>
- <group ns="ur5_robot1">
-  <rosparam command="load" file="$(find moveit_config_ur5)/config/joint_names.yaml" />
 
-  <include file="$(find moveit_config_ur5)/launch/planning_context.launch">
-    <arg name="load_robot_description" value="true"/>
-  </include>
+  <include file="$(find ur5_planning)/launch/ur5_robot1_planning.launch"/>
 
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="false"/>
-    <rosparam param="/source_list">[/joint_states]</rosparam>
-  </node>
+  <include file="$(find ur5_planning)/launch/ur5_robot2_planning.launch"/>
 
-  <include file="$(find moveit_config_ur5)/launch/move_group.launch">
-    <arg name="publish_monitored_planning_scene" value="true"/>
-  </include>
-  <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot1.launch">
-    <arg name="config" value="true"/>
-  </include>
-
-
- </group>
-
- <group ns="ur5_robot2">
-  <rosparam command="load" file="$(find moveit_config_ur5)/config/joint_names.yaml" />
-
-  <include file="$(find moveit_config_ur5)/launch/planning_context.launch">
-    <arg name="load_robot_description" value="true"/>
-  </include>
-
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="false"/>
-    <rosparam param="/source_list">[/joint_states]</rosparam>
-  </node>
-
-  <include file="$(find moveit_config_ur5)/launch/move_group.launch">
-    <arg name="publish_monitored_planning_scene" value="true"/>
-  </include>
-  <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot2.launch">
-    <arg name="config" value="true"/>
-  </include>
-
-
- </group>
-
- </launch>
+</launch>

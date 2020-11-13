@@ -7,10 +7,47 @@ project(ur5_planning)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  moveit_commander moveit_core
+  moveit_fake_controller_manager
+  moveit_msgs
+  moveit_planners_ompl
+  moveit_ros_benchmarks
+  # moveit_ros_benchmarks_gui
+  moveit_ros_control_interface
+  moveit_ros_manipulation
+  moveit_ros_move_group
+  moveit_ros_perception
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  moveit_ros_robot_interaction
+  moveit_ros_visualization
+  moveit_ros_warehouse
+  moveit_setup_assistant
+  moveit_simple_controller_manager
+  rqt_moveit
+  moveit_visual_tools
+  rviz_visual_tools
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+
+########################################### INCLUDING EIGEN LIBRARIES ######################################################
+
+find_package(Eigen3)
+if(NOT EIGEN3_FOUND)
+  # Fallback to cmake_modules
+  find_package(cmake_modules REQUIRED)
+  find_package(Eigen REQUIRED)
+  set(EIGEN3_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
+  set(EIGEN3_LIBRARIES ${EIGEN_LIBRARIES})  # Not strictly necessary as Eigen is head only
+  # Possibly map additional variables to the EIGEN3_ prefix.
+else()
+  set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+endif()
+#############################################################################################################################
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -99,7 +136,7 @@ find_package(catkin REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+ INCLUDE_DIRS include
 #  LIBRARIES ur5_planning
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -112,8 +149,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-# ${catkin_INCLUDE_DIRS}
+    include
+    ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -200,3 +237,8 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+add_executable(ur5_robot1_move_group src/ur5_robot1_move_group.cpp)
+target_link_libraries(ur5_robot1_move_group ${catkin_LIBRARIES})
+
+add_executable(ur5_robot2_move_group src/ur5_robot2_move_group.cpp)
+target_link_libraries(ur5_robot2_move_group ${catkin_LIBRARIES})
