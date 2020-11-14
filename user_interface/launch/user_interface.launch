@@ -1,0 +1,13 @@
+<launch>
+
+<!-- CHANGE PACKGE NAME HERE -->
+<arg name="package_name" value="user_interface"/>            
+<arg name="package_path" value="$(find user_interface)"/>
+
+
+<!--RQT Node -->
+    <node name="rqt_user_interface" pkg="rqt_gui" type="rqt_gui"
+          args="--perspective-file $(arg package_path)/rqt/user_rqt.perspective"/>
+
+
+</launch>

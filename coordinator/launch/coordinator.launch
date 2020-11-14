@@ -1,0 +1,5 @@
+<launch>
+
+    <node name="Coordinator" pkg="coordinator" type="coordinator" output="screen"/>
+
+</launch>

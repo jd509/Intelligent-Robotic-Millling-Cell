@@ -18,6 +18,30 @@ Move_Group_Robot_1::Move_Group_Robot_1()
     {
       std::cout<<"Joint Name: "<<i<<std::endl;
     }
+    // std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
+    // move_to_configuration(target_joint_angles);
+
+    //ROS publishers and subscribers
+    receive_data_from_coord_sub = node_handle_rob1.subscribe("/command_rob_1", 1000, &Move_Group_Robot_1::perform_actions,this);
+    send_update_pub = node_handle_rob1.advertise<std_msgs::String>("/rob1_to_coord", 1000);
+}
+
+void Move_Group_Robot_1::send_update(std::string msg)
+{
+  update_msg.data = msg;
+  send_update_pub.publish(update_msg);
+  update_msg.data.clear();
+}
+
+
+void Move_Group_Robot_1::perform_actions(const std_msgs::String& msg)
+{
+  if(msg.data.compare("start_robot_initialization") == 0)
+  {
+    std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
+    move_to_configuration(target_joint_angles);
+    send_update("robot_1_intialization_complete");
+  }
 }
 
 void Move_Group_Robot_1::add_robot_table()
@@ -63,24 +87,15 @@ void Move_Group_Robot_1::move_to_configuration(std::vector<double>& joint_angles
   // moveit::core::RobotStatePtr current_state = ur5_robot1_group_ptr->getCurrentState();
   
   // moveit::planning_interface::MoveGroupInterface::Plan abb_rob1_plan;
-  std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
-  std::vector<double> target_joint_angles_2 = {0.7500, -1.7009, -1.9787, -2.5341, 1.6315, -0.0041};
+  // std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
+  // std::vector<double> target_joint_angles_2 = {0.7500, -1.7009, -1.9787, -2.5341, 1.6315, -0.0041};
 
-  ur5_robot1_group_ptr->setJointValueTarget(target_joint_angles);
+  ur5_robot1_group_ptr->setStartStateToCurrentState();
+
+  ur5_robot1_group_ptr->setJointValueTarget(joint_angles);
 
   bool success = (ur5_robot1_group_ptr->plan(ur5_robot1_goal_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-  ur5_robot1_group_ptr->move();
-  std::cout<<ur5_robot1_goal_plan.trajectory_.joint_trajectory.points[0]<<std::endl;
-  std::cout<<ur5_robot1_goal_plan.trajectory_.joint_trajectory.points.back()<<std::endl;
-
-  
-  ur5_robot1_group_ptr->setStartStateToCurrentState();
-  ur5_robot1_group_ptr->setJointValueTarget(target_joint_angles_2);
-
-
-  success = (ur5_robot1_group_ptr->plan(ur5_robot1_goal_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
   ur5_robot1_group_ptr->move();
   std::cout<<ur5_robot1_goal_plan.trajectory_.joint_trajectory.points[0]<<std::endl;
   std::cout<<ur5_robot1_goal_plan.trajectory_.joint_trajectory.points.back()<<std::endl;
@@ -90,23 +105,13 @@ void Move_Group_Robot_1::move_to_configuration(std::vector<double>& joint_angles
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "ur5_robot1_planning");
-  ros::AsyncSpinner spinner(1);
+  ros::AsyncSpinner spinner(2);
   spinner.start();
   Move_Group_Robot_1 rob1_obj;
         
-
-  std::cout<<"////////////////////////////////    Planning started    /////////////////////////////// \n";
-
   rob1_obj.add_robot_table();
 
-  std::cout<<"Executing joint angles [1.5, 1.2, 0.5, 3.12, 1.23, 4.5] \n";
-  
-  std::vector<double> target_joint_angles = {1.5, 1.2, 0.5, 3.12, 1.23, 4.5};
-
-  rob1_obj.move_to_configuration(target_joint_angles);
-
-  std::cout<<"////////////////////////////////  Planning Completed    ////////////////////////////////// \n";
-
+  std::cout<<"Robot Table added as a Collision Object"<<std::endl;
 
   // Planning with Path Constraints
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -27,9 +27,9 @@
   </include>
 
 <!--To launch Rviz for MoveIt-->
-  <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot1.launch">
+  <!-- <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot1.launch">
     <arg name="config" value="true"/>
-  </include>
+  </include> -->
 
   <node name="ur5_robot1_planning" pkg="ur5_planning" type="ur5_robot1_move_group" respawn="true" output="screen"/>
  </group>

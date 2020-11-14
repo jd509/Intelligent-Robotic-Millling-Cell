@@ -1,0 +1,21 @@
+<library path="src">
+  <class name="Main_Plugin" type="user_interface.user_interface_control.MyPlugin" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A control panel for the system.
+    </description>
+    <qtgui>
+      <!-- optional grouping...
+      <group>
+        <label>Group</label>
+      </group>
+      <group>
+        <label>Subgroup</label>
+      </group>
+      -->
+      <label>Main UI</label>
+      <icon type="theme">system-help</icon>
+      <statustip>Great user interface to provide real value.</statustip>
+    </qtgui>
+  </class>
+</library>
+

@@ -13,6 +13,9 @@
 #include <moveit_visual_tools/moveit_visual_tools.h>
 #include <geometric_shapes/shape_operations.h>
 
+#include <ros/ros.h>
+#include <std_msgs/String.h>
+
 class Move_Group_Robot_1
 {
 private:
@@ -21,6 +24,11 @@ public:
     
     // Initializing ROS Parameters
     ros::NodeHandle node_handle_rob1;
+    ros::Subscriber receive_data_from_coord_sub;
+    ros::Publisher send_update_pub;
+    std_msgs::String update_msg;
+
+
     std::string PLANNING_GROUP = "manipulator";
     std::string ROBOT_DESCRIPTION = "ur5_robot1/robot_description";
 
@@ -40,6 +48,8 @@ public:
     std::vector<std::string> joint_names;
     std::vector<std::string> link_names;
 
+    //Publishers and Subscribers
+
 
     //Functions to perform operations
     Move_Group_Robot_1();
@@ -47,6 +57,10 @@ public:
     void move_to_configuration(std::vector<double>& joint_angles);
 
     void add_robot_table();
+
+    void send_update(std::string );
+
+    void perform_actions(const std_msgs::String& );
 };
 
 
