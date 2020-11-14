@@ -11,6 +11,7 @@ from python_qt_binding.QtWidgets import QWidget, QLineEdit, QMessageBox
 
 #importing rospy msgs ---------------->
 from std_msgs.msg import String
+from std_msgs.msg import Int16
 
 #--------------------------------------
 
@@ -42,11 +43,13 @@ class MyPlugin(Plugin):
         #ROS publishers and subscribers--------------->
         self.coord_to_gui_sub = rospy.Subscriber('/coord_to_gui', String, self.comm_to_gui_callback)
         self.gui_to_coord_pub = rospy.Publisher('/gui_to_coord', String, queue_size=1000)
+        self.send_num_wp_pub = rospy.Publisher('/num_wp', Int16, queue_size=1000)
 
         #---------------------------------------------
 
         #GUI Button Connections---------------------------->
         self._widget.initialize_robot_btn.clicked[bool].connect(self.intialize_robots)
+        self._widget.load_wp_btn.clicked[bool].connect(self.load_wp)
 
         ## Robot1--------------->
         self._widget.approach_wrkpiece_btn.clicked[bool].connect(self.approach_wrkpiece)
@@ -72,6 +75,11 @@ class MyPlugin(Plugin):
     def intialize_robots(self):
         self.publish_msg_to_coord('initialize_robots')
         pass
+
+    def load_wp(self):
+        num_wp = self._widget.num_wp_txtbx.text()
+        msg = int(num_wp)
+        self.send_num_wp_pub.publish(msg)
 
     ###Robot 1-----> 
     def approach_wrkpiece(self):
@@ -108,6 +116,7 @@ class MyPlugin(Plugin):
         #Unregister all publishers and subscribers
         self.gui_to_coord_pub.unregister()
         self.coord_to_gui_sub.unregister()
+        self.send_num_wp_pub.unregister()
         pass
     
     def save_settings(self, plugin_settings, instance_settings):

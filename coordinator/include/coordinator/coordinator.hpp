@@ -5,12 +5,14 @@
 #include <bits/stdc++.h> 
 #include <iostream>
 #include <ctime>
+#include <vector>
 #include <cstdlib>
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <geometry_msgs/PoseArray.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Int16.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float32MultiArray.h>
 #include <std_msgs/Int32MultiArray.h>
@@ -30,10 +32,14 @@ class Coordinator
     ros::Publisher command_rob_1_pub;
     ros::Publisher command_rob_2_pub;
     ros::Publisher send_update_pub;
+    ros::Publisher coord_to_gazebo_pub;
     
     ros::Subscriber rob_1_sub;
     ros::Subscriber rob_2_sub;
     ros::Subscriber gui_msgs_sub;
+    ros::Subscriber num_of_wp_sub;
+
+    std::vector<std::vector<float>>wp_position = {{1.36,0.6,0.525}, {1.36,0.75,0.525}, {1.36,0.9,0.525},{1.53,0.6,0.525}, {1.53,0.75,0.525},{1.53,0.9,0.525},{1.7,0.6,0.525},{1.7,0.75,0.525},{1.7,0.9,0.525}};
 
     //Constructors and other functions
     Coordinator();
@@ -47,6 +53,8 @@ class Coordinator
     void rob1_callback(const std_msgs::String& );
 
     void rob2_callback(const std_msgs::String& );
+
+    void load_workpieces(const std_msgs::Int16& );
 };
 
 

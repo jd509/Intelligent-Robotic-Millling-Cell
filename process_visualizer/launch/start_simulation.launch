@@ -8,6 +8,7 @@
   <arg name="gui" default="true" doc="Starts gazebo gui" />
   <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur_description)/urdf/ur5_robot.urdf.xacro' transmission_hw_interface:=$(arg transmission_hw_interface)" />
   <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur_description)/urdf/ur5_joint_limited_robot.urdf.xacro' transmission_hw_interface:=$(arg transmission_hw_interface)" />
+  <param name="workpiece_urdf_path" type="str" value="$(find process_visualizer)/urdf/workpiece.urdf"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" default="worlds/empty.world"/>
@@ -20,6 +21,36 @@
 
 <!-- Spawn a table for robot 1 into Gazebo -->
   <node name="spawn_urdf_robot_table2" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_table.urdf -urdf -x 0.87 -y -0.83 -z 0.005 -model robot_table_2" />
+
+<!--Spawn a table for workpiece near robot 1 to pick up-->
+  <node name="spawn_urdf_workpiece_table1" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece_table.urdf -urdf -x 1.28 -y 0.53 -z 0.005 -model workpiece_table_1" />
+
+<!--Node to spawn workpieces-->
+  <node name="workpiece_handler" pkg="process_visualizer" type="workpiece_handler" output="screen"/>
+
+<!--row 1-->
+  <!-- <node name="spawn_urdf_wp" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.7 -y 0.9 -z 0.525 -model workpiece" />
+
+  <node name="spawn_urdf_wp2" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.7 -y 0.75 -z 0.525 -model workpiece2" />
+
+  <node name="spawn_urdf_wp3" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.7 -y 0.6 -z 0.525 -model workpiece3" /> -->
+
+<!--row 2-->
+
+  <!-- <node name="spawn_urdf_wp4" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.53 -y 0.9 -z 0.525 -model workpiece4" />
+
+  <node name="spawn_urdf_wp5" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.53 -y 0.75 -z 0.525 -model workpiece5" />
+
+  <node name="spawn_urdf_wp6" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.53 -y 0.6 -z 0.525 -model workpiece6" /> -->
+
+<!--row 3-->
+
+  <!-- <node name="spawn_urdf_wp7" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.36 -y 0.9 -z 0.525 -model workpiece7" />
+
+  <node name="spawn_urdf_wp8" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.36 -y 0.75 -z 0.525 -model workpiece8" />
+
+  <node name="spawn_urdf_wp9" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.36 -y 0.6 -z 0.525 -model workpiece9" /> -->
+
 
   <group ns="ur5_robot1">
     <param name="tf_prefix" value="ur5_robot1_tf" />

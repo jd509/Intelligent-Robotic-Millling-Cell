@@ -6,10 +6,12 @@ Coordinator::Coordinator()
     command_rob_1_pub = nh_coord.advertise<std_msgs::String>("/command_rob_1", 1000);
     command_rob_2_pub = nh_coord.advertise<std_msgs::String>("/command_rob_2", 1000);
     send_update_pub = nh_coord.advertise<std_msgs::String>("/coord_to_gui", 1000);
+    coord_to_gazebo_pub = nh_coord.advertise<geometry_msgs::Pose>("/initial_workpiece_pos", 1000);
 
     rob_1_sub = nh_coord.subscribe("/rob1_to_coord", 1000, &Coordinator::rob1_callback, this);
     rob_2_sub = nh_coord.subscribe("/rob2_to_coord", 1000, &Coordinator::rob2_callback, this);
     gui_msgs_sub = nh_coord.subscribe("/gui_to_coord", 1000, &Coordinator::gui_callback, this);
+    num_of_wp_sub = nh_coord.subscribe("/num_wp", 1000, &Coordinator::load_workpieces, this);
 }
 
 void Coordinator::initialize_robots()
@@ -19,6 +21,27 @@ void Coordinator::initialize_robots()
     // while((command_rob_1_pub.getNumSubscribers()<1)&&(command_rob_2_pub.getNumSubscribers()<1)){
     //     sleep_t.sleep();
     // }
+}
+
+void Coordinator::load_workpieces(const std_msgs::Int16& num_wp)
+{
+    geometry_msgs::Pose p;
+    std::cout<<"Number of workpieces to spawn = "<<num_wp.data<<std::endl;
+    for(int i = 0; i<num_wp.data; i++)
+    {
+        p.position.x = wp_position[i][0];
+        p.position.y = wp_position[i][1];
+        p.position.z = wp_position[i][2];
+
+        p.orientation.w = 1.0;  
+        p.orientation.x = 0.0;
+        p.orientation.y = 0.0;
+        p.orientation.z = 0.0;
+
+        std::cout<<"Position for wp "<<i<<" is:"<<p.position.x<<" "<<p.position.y<<" "<<p.position.z<<std::endl;
+        coord_to_gazebo_pub.publish(p);
+        
+    }    
 }
 
 void Coordinator::rob1_callback(const std_msgs::String& str)

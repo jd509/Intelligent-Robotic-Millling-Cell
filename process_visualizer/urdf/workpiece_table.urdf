@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot name="workpiece_table">
+  <link name="workpiece_table_origin">
+    <visual>
+      	<geometry>
+          	<mesh filename="package://process_visualizer/resources/table_workpiece.stl"
+                scale="1 1 1"/>
+      	</geometry>
+	  	<material name="ABS" >
+          	<color rgba="0.9 0.7 0.5 1.0" />
+         </material> 	
+    </visual>
+    <inertial>
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+
+  </link>
+  <link name="world"/>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="workpiece_table_origin"/>
+  </joint>
+
+</robot>

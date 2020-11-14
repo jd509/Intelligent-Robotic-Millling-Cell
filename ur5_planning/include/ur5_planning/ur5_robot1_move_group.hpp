@@ -15,6 +15,7 @@
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
+#include <geometry_msgs/Pose.h>
 
 class Move_Group_Robot_1
 {
@@ -24,9 +25,8 @@ public:
     
     // Initializing ROS Parameters
     ros::NodeHandle node_handle_rob1;
-    ros::Subscriber receive_data_from_coord_sub;
-    ros::Publisher send_update_pub;
     std_msgs::String update_msg;
+    int workpiece_id = 0;
 
 
     std::string PLANNING_GROUP = "manipulator";
@@ -41,7 +41,7 @@ public:
     const robot_state::JointModelGroup* joint_model_group;
     moveit::planning_interface::MoveGroupInterface::Plan ur5_robot1_cartesian_plan;
     moveit::planning_interface::MoveGroupInterface::Plan ur5_robot1_goal_plan;
-    std::vector<moveit_msgs::CollisionObject> collision_objects;
+    
 
     moveit_msgs::OrientationConstraint goal_pose_constraint;
     
@@ -49,6 +49,10 @@ public:
     std::vector<std::string> link_names;
 
     //Publishers and Subscribers
+    ros::Subscriber receive_data_from_coord_sub;
+    ros::Subscriber workpiece_pos_sub;
+    ros::Publisher send_update_pub;
+    ros::Publisher planning_scene_diff_publisher;
 
 
     //Functions to perform operations
@@ -58,9 +62,17 @@ public:
 
     void add_robot_table();
 
+    void add_workpiece_table();
+
     void send_update(std::string );
 
     void perform_actions(const std_msgs::String& );
+
+    void add_collision_obj_to_world(moveit_msgs::CollisionObject object, std::string object_name);
+
+    void add_workpieces(const geometry_msgs::Pose& );
+
+    std::string intToString (int a);
 };
 
 
