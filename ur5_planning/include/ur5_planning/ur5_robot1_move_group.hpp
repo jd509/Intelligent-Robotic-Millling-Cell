@@ -11,6 +11,7 @@
 #include <moveit_msgs/CollisionObject.h>
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
+#include <geometric_shapes/shape_operations.h>
 
 class Move_Group_Robot_1
 {
@@ -32,6 +33,7 @@ public:
     const robot_state::JointModelGroup* joint_model_group;
     moveit::planning_interface::MoveGroupInterface::Plan ur5_robot1_cartesian_plan;
     moveit::planning_interface::MoveGroupInterface::Plan ur5_robot1_goal_plan;
+    std::vector<moveit_msgs::CollisionObject> collision_objects;
 
     moveit_msgs::OrientationConstraint goal_pose_constraint;
     
@@ -43,6 +45,8 @@ public:
     Move_Group_Robot_1();
     
     void move_to_configuration(std::vector<double>& joint_angles);
+
+    void add_robot_table();
 };
 
 

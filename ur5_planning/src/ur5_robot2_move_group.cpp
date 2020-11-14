@@ -18,6 +18,44 @@ Move_Group_Robot_2::Move_Group_Robot_2()
     }
 }
 
+void Move_Group_Robot_2::add_robot_table()
+{
+  //Intializing Collision Object for robot table
+  moveit_msgs::CollisionObject robot_table;
+  robot_table.header.frame_id = ur5_robot2_group_ptr->getPlanningFrame();
+  robot_table.id = "robot_table_2";
+
+  //Creating a mesh from stl of table
+  std::string mesh_file_for_table = "package://process_visualizer/resources/table.stl";
+  shapes::Mesh *table_mesh = shapes::createMeshFromResource(mesh_file_for_table);
+
+  //Defining shape message
+  shape_msgs::Mesh table_mesh_;
+  shapes::ShapeMsg table_mesh_msg;
+  shapes::constructMsgFromShape(table_mesh, table_mesh_msg);
+  table_mesh_ = boost::get<shape_msgs::Mesh>(table_mesh_msg);
+
+  //Position of table
+  geometry_msgs::Pose table_pose;
+  table_pose.orientation.w = 1.0;
+  table_pose.orientation.x = 0.0;
+  table_pose.orientation.y = 0.0;
+  table_pose.orientation.z = 0.0;
+
+  table_pose.position.x = 0.87;
+  table_pose.position.y = -0.83;
+  table_pose.position.z = 0.005;
+
+  //Adding mesh to collision object
+  robot_table.meshes.push_back(table_mesh_);
+  robot_table.mesh_poses.push_back(table_pose);
+  robot_table.operation = robot_table.ADD;
+
+  collision_objects.push_back(robot_table);
+
+  planning_scene_interface.addCollisionObjects(collision_objects);
+}
+
 void Move_Group_Robot_2::move_to_configuration(std::vector<double>& joint_angles)
 {
   // moveit::core::RobotStatePtr current_state = ur5_robot1_group_ptr->getCurrentState();
@@ -55,33 +93,15 @@ int main(int argc, char** argv)
   spinner.start();
   Move_Group_Robot_2 rob2_obj;
         
-
-
-  // std::cout<<"///////////////////////////////////      Model Loaded     ////////////////////////////////// \n";
-
-  // ROS_INFO_NAMED("tutorial", "Planning frame: %s", abb_rob1_movegrp_ptr->getPlanningFrame().c_str());
-
-  // ROS_INFO_NAMED("tutorial", "End effector link: %s", abb_rob1_movegrp_ptr->getEndEffectorLink().c_str());
-
-  // ROS_INFO_NAMED("tutorial", "Available Planning Groups:");
-  // std::copy(abb_rob1_movegrp_ptr->getJointModelGroupNames().begin(), abb_rob1_movegrp_ptr->getJointModelGroupNames().end(),
-  //           std::ostream_iterator<std::string>(std::cout, ", "));
-
   std::cout<<"////////////////////////////////    Planning started    /////////////////////////////// \n";
+
+  rob2_obj.add_robot_table();
 
   std::cout<<"Executing joint angles [1.5, 1.2, 0.5, 3.12, 1.23, 4.5] \n";
   
   std::vector<double> target_joint_angles = {1.5, 1.2, 0.5, 3.12, 1.23, 4.5};
 
   rob2_obj.move_to_configuration(target_joint_angles);
-
-  // rob1_obj.abb_rob1_movegrp_ptr->setStartStateToCurrentState();
-
-  // std::cout<<"Executing joint angles [2.1, 1.5, 0.75, 3.12, 1.98, 4.5] \n";
-
-  // std::vector<double> target_joint_angles_2 = {2.1, 1.5, 0.75, 3.12, 1.98, 4.5};
-
-  // rob1_obj.move_to_configuration(target_joint_angles_2);
 
 
   std::cout<<"////////////////////////////////  Planning Completed    ////////////////////////////////// \n";

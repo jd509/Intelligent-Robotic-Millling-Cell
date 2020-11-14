@@ -1,5 +1,9 @@
 <launch>
 
+<!--Adding arguements for robot position in world-->
+  <arg name="rob_xyz" default="'0.0 0.0 0.0'"/>
+  <arg name="rob_rpy" default="'0.0 0.0 0.0'"/>
+
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
@@ -41,6 +45,8 @@
   <!-- load URDF, SRDF and joint_limits configuration -->
   <include file="$(find moveit_config_ur5)/launch/planning_context.launch">
     <arg name="load_robot_description" value="$(arg load_robot_description)" />
+    <arg name="rob_xyz" value="$(arg rob_xyz)"/>
+    <arg name="rob_rpy" value="$(arg rob_rpy)"/>
   </include>
 
   <!-- Planning Functionality -->

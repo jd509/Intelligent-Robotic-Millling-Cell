@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /MotionPlanning1
         - /MotionPlanning1/Planned Path1
+        - /Axes1
       Splitter Ratio: 0.7425600290298462
     Tree Height: 177
   - Class: rviz/Help
@@ -229,11 +230,18 @@ Visualization Manager:
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
+    - Class: rviz/Axes
+      Enabled: true
+      Length: 0.20000000298023224
+      Name: Axes
+      Radius: 0.009999999776482582
+      Reference Frame: <Fixed Frame>
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: robot1_tf/world
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -245,25 +253,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.996500015258789
+      Distance: 3.166904926300049
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.11356700211763382
-        Y: 0.10592000186443329
+        X: 0.6651120185852051
+        Y: -0.11524756252765656
         Z: 2.2351800055275817e-7
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5097969770431519
+      Pitch: 0.41979724168777466
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 5.659949779510498
+      Yaw: 5.90494441986084
     Saved: ~
 Window Geometry:
   Displays:

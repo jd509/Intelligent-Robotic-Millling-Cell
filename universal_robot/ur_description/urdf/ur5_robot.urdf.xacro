@@ -2,6 +2,9 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro"
        name="ur5" >
 
+  <xacro:arg name="rob_xyz" default="0.0 0.0 0.0"/>
+  <xacro:arg name="rob_rpy" default="0.0 0.0 0.0"/>
+
   <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
 
   <!-- common stuff -->
@@ -20,7 +23,7 @@
   <joint name="world_joint" type="fixed">
     <parent link="world" />
     <child link = "base_link" />
-    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    <origin xyz="$(arg rob_xyz)" rpy="$(arg rob_rpy)" />
   </joint>
 
 </robot>
