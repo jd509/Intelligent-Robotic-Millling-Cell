@@ -76,6 +76,7 @@
         "regex": "cpp",
         "future": "cpp",
         "scoped_allocator": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "*.ipp": "cpp"
     }
 }

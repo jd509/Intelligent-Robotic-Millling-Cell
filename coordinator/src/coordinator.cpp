@@ -40,7 +40,7 @@ void Coordinator::load_workpieces(const std_msgs::Int16& num_wp)
 
         std::cout<<"Position for wp "<<i<<" is:"<<p.position.x<<" "<<p.position.y<<" "<<p.position.z<<std::endl;
         coord_to_gazebo_pub.publish(p);
-        
+
     }    
 }
 
@@ -78,6 +78,16 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         command_rob_2_pub.publish(all_rob_msg);
     }
 
+    else if (str.data.compare("approach_and_pick_workpiece_rob1")==0)
+    {
+        std::cout<<"###################################### \n";
+        std::cout<<"Initializing Pickup by Robot 1 \n";
+        std::cout<<"###################################### \n";
+        std_msgs::String pick_msg;
+        pick_msg.data = "start_pickup_rob1";
+        command_rob_1_pub.publish(pick_msg);
+
+    }
 }
 
 void Coordinator::send_update_to_gui(std::string str_msg)

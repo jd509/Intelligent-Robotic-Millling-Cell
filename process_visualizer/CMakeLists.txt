@@ -11,6 +11,26 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   rviz_visual_tools
+  moveit_commander moveit_core
+  moveit_fake_controller_manager
+  moveit_msgs
+  moveit_planners_ompl
+  moveit_ros_benchmarks
+  # moveit_ros_benchmarks_gui
+  moveit_ros_control_interface
+  moveit_ros_manipulation
+  moveit_ros_move_group
+  moveit_ros_perception
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  moveit_ros_robot_interaction
+  moveit_ros_visualization
+  moveit_ros_warehouse
+  moveit_setup_assistant
+  moveit_simple_controller_manager
+  rqt_moveit
+  moveit_visual_tools
+  rviz_visual_tools
 )
 
 ## System dependencies are found with CMake's conventions

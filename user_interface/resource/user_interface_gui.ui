@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -55,16 +55,9 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QPushButton" name="approach_wrkpiece_btn">
+        <widget class="QPushButton" name="approach_pick_wrkpiece_rob1_btn">
          <property name="text">
-          <string>Approach Workpiece</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pick_workpiece_rob1_btn">
-         <property name="text">
-          <string>Pick Workpiece</string>
+          <string>Approach and Pick Workpiece</string>
          </property>
         </widget>
        </item>

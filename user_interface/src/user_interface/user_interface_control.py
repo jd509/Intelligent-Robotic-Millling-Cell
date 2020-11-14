@@ -52,8 +52,7 @@ class MyPlugin(Plugin):
         self._widget.load_wp_btn.clicked[bool].connect(self.load_wp)
 
         ## Robot1--------------->
-        self._widget.approach_wrkpiece_btn.clicked[bool].connect(self.approach_wrkpiece)
-        self._widget.pick_workpiece_rob1_btn.clicked[bool].connect(self.pick_workpiece_rob1)
+        self._widget.approach_pick_wrkpiece_rob1_btn.clicked[bool].connect(self.approach_pick_wrkpiece)
         self._widget.place_workpiece_btn.clicked[bool].connect(self.place_workpiece)
 
         ##Robot2---------------->
@@ -82,13 +81,13 @@ class MyPlugin(Plugin):
         self.send_num_wp_pub.publish(msg)
 
     ###Robot 1-----> 
-    def approach_wrkpiece(self):
-        self.publish_msg_to_coord('approach_workpiece_rob1')
+    def approach_pick_wrkpiece(self):
+        self.publish_msg_to_coord('approach_and_pick_workpiece_rob1')
         pass
 
-    def pick_workpiece_rob1(self):
-        self.publish_msg_to_coord('pick_workpiece_rob1')
-        pass
+    # def pick_workpiece_rob1(self):
+    #     self.publish_msg_to_coord('pick_workpiece_rob1')
+    #     pass
 
     def place_workpiece(self):
         self.publish_msg_to_coord('place_workpiece_rob1')

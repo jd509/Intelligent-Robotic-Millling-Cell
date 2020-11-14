@@ -12,7 +12,12 @@ Move_Group_Robot_1::Move_Group_Robot_1()
     joint_names = joint_model_group->getVariableNames();
     link_names = joint_model_group->getLinkModelNames();
 
-    // std::cout<<ur5_robot1_group_ptr->getPlanningFrame()<<std::endl;
+    // ur5_robot1_group_ptr->setGoalJointTolerance(0.1);
+    // ur5_robot1_group_ptr->setGoalPositionTolerance(0.1);
+    // ur5_robot1_group_ptr->setGoalOrientationTolerance(0.1);
+
+    ur5_robot1_group_ptr->setGoalTolerance(0.1);
+    ur5_robot1_group_ptr->setPlanningTime(7.0);
 
     for(auto i:joint_names)
     {
@@ -49,6 +54,11 @@ void Move_Group_Robot_1::perform_actions(const std_msgs::String& msg)
 
     //Adding other collision objects to world after initialization
     add_workpiece_table();
+    add_workpiece_table_2();
+  }
+  else if(msg.data.compare("start_pickup_rob1")==0)
+  {
+    pick();
   }
 }
 
@@ -85,6 +95,7 @@ void Move_Group_Robot_1::add_workpieces(const geometry_msgs::Pose &p)
   //Adding mesh to collision object
   workpiece.meshes.push_back(table_mesh_);
   workpiece.mesh_poses.push_back(table_pose);
+  wp_pos.emplace_back(table_pose);
   workpiece.operation = workpiece.ADD;
 
   add_collision_obj_to_world(workpiece, workpiece_id_generate);
@@ -178,6 +189,75 @@ void Move_Group_Robot_1::add_workpiece_table()
   workpiece_table.operation = workpiece_table.ADD;
 
   add_collision_obj_to_world(workpiece_table, "work_piece_table_for_pickup");
+}
+
+void Move_Group_Robot_1::add_workpiece_table_2()
+{
+  //Intializing Collision Object for workpiece table
+  moveit_msgs::CollisionObject workpiece_table;
+  workpiece_table.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
+  workpiece_table.id = "workpiece_table_2";
+
+  //Creating a mesh from stl of table
+  std::string mesh_file_for_table = "package://process_visualizer/resources/table_workpiece.stl";
+  shapes::Mesh *table_mesh = shapes::createMeshFromResource(mesh_file_for_table);
+
+  //Defining shape message
+  shape_msgs::Mesh table_mesh_;
+  shapes::ShapeMsg table_mesh_msg;
+  shapes::constructMsgFromShape(table_mesh, table_mesh_msg);
+  table_mesh_ = boost::get<shape_msgs::Mesh>(table_mesh_msg);
+ 
+  //Position of table
+  geometry_msgs::Pose table_pose;
+  table_pose.orientation.w = 1.0;
+  table_pose.orientation.x = 0.0;
+  table_pose.orientation.y = 0.0;
+  table_pose.orientation.z = 0.0;
+
+  table_pose.position.x = 0.8;
+  table_pose.position.y = -0.25;
+  table_pose.position.z = 0.005;
+
+  //Adding mesh to collision object
+  workpiece_table.meshes.push_back(table_mesh_);
+  workpiece_table.mesh_poses.push_back(table_pose);
+  workpiece_table.operation = workpiece_table.ADD;
+
+  add_collision_obj_to_world(workpiece_table, "work_piece_table_for_placing");
+}
+
+void Move_Group_Robot_1::pick()
+{
+  std::vector<moveit_msgs::Grasp> grasps;
+  grasps.resize(1);
+
+  //setting grasp pose
+  grasps[0].grasp_pose.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
+  tf2::Quaternion orientation;
+  orientation.setRPY(-M_PI / 2, -M_PI / 4, -M_PI / 2);
+  grasps[0].grasp_pose.pose.orientation = tf2::toMsg(orientation);
+  grasps[0].grasp_pose.pose.position.x = wp_pos[current_wp].position.x;
+  grasps[0].grasp_pose.pose.position.y = wp_pos[current_wp].position.y;
+  grasps[0].grasp_pose.pose.position.z = wp_pos[current_wp].position.z;
+
+  //setting pre grasp pose
+  grasps[0].pre_grasp_approach.direction.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
+  grasps[0].pre_grasp_approach.direction.vector.x = 1.0;
+  grasps[0].pre_grasp_approach.min_distance = 0.095;
+  grasps[0].pre_grasp_approach.desired_distance = 0.115;
+
+  //setting post grasp retreat
+  grasps[0].post_grasp_retreat.direction.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
+  grasps[0].post_grasp_retreat.direction.vector.z = 1.0;
+  grasps[0].post_grasp_retreat.min_distance = 0.1;
+  grasps[0].post_grasp_retreat.desired_distance = 0.25;  
+
+  //picking up object
+  ur5_robot1_group_ptr->setSupportSurfaceName("workpiece_table_1");
+  
+  std::string object_name = "workpiece_" + intToString(current_wp);
+  ur5_robot1_group_ptr->pick(object_name, grasps);
 }
 
 void Move_Group_Robot_1::move_to_configuration(std::vector<double>& joint_angles)

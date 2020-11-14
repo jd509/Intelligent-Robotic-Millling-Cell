@@ -9,6 +9,7 @@
 
 #include <moveit_msgs/AttachedCollisionObject.h>
 #include <moveit_msgs/CollisionObject.h>
+#include <moveit_msgs/Grasp.h>
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 #include <geometric_shapes/shape_operations.h>
@@ -16,6 +17,8 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <geometry_msgs/Pose.h>
+
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 class Move_Group_Robot_1
 {
@@ -27,6 +30,7 @@ public:
     ros::NodeHandle node_handle_rob1;
     std_msgs::String update_msg;
     int workpiece_id = 0;
+    int current_wp = 0;
 
 
     std::string PLANNING_GROUP = "manipulator";
@@ -47,6 +51,7 @@ public:
     
     std::vector<std::string> joint_names;
     std::vector<std::string> link_names;
+    std::vector<geometry_msgs::Pose> wp_pos;
 
     //Publishers and Subscribers
     ros::Subscriber receive_data_from_coord_sub;
@@ -64,6 +69,8 @@ public:
 
     void add_workpiece_table();
 
+    void add_workpiece_table_2();
+
     void send_update(std::string );
 
     void perform_actions(const std_msgs::String& );
@@ -72,7 +79,10 @@ public:
 
     void add_workpieces(const geometry_msgs::Pose& );
 
+    void pick();
+
     std::string intToString (int a);
+
 };
 
 

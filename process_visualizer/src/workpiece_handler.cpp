@@ -1,6 +1,6 @@
 #include "process_visualizer/workpiece_handler.hpp"
 
-
+bool robot_1_attached = false;
 Workpiece_Object::Workpiece_Object()
 {
     gazebo_model_state_pub = nh_workpiece.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state", 1);
@@ -44,7 +44,7 @@ void Workpiece_Object::load_workpiece_in_gazebo(const geometry_msgs::Pose& p)
     wp_strStream << wp_inXml.rdbuf();
     wp_xmlStr = wp_strStream.str();
 
-    std::string wp_index = intToString(num_of_workpieces);
+    std::string wp_index = intToString(num_of_workpieces_rob1);
     std::string model_name;
 
     model_name = "workpiece_" + wp_index;
@@ -65,11 +65,53 @@ void Workpiece_Object::load_workpiece_in_gazebo(const geometry_msgs::Pose& p)
         ROS_INFO("fail in first call");
         ROS_ERROR("fail to connect with gazebo server");
     }
-    num_of_workpieces = num_of_workpieces+1;
+    num_of_workpieces_rob1 = num_of_workpieces_rob1+1;
 }
 
 void Workpiece_Object::rob1_jointstates_callback(const sensor_msgs::JointState &joint_states_current)
 {
+    if(robot_1_attached == true)
+    {
+        robot_model_loader::RobotModelLoader robot_model_loader("ur5_robot1/robot_description");
+        kinematic_model_ur5_1 = robot_model_loader.getModel();
+        kinematic_state_ur5_1 = robot_state::RobotStatePtr(new robot_state::RobotState(kinematic_model_ur5_1));
+
+        const robot_state::JointModelGroup *joint_model_group = kinematic_model_ur5_1->getJointModelGroup("manipulator");
+        std::vector<double> joint_states;
+        for (size_t i = 0; i < joint_states_current.position.size() - 2; ++i)
+        {
+            joint_states.push_back(joint_states_current.position[i + 2]);
+        }
+        kinematic_state_ur5_1->setJointGroupPositions(joint_model_group, joint_states);
+        const Eigen::Affine3d &end_effector_state = kinematic_state_ur5_1->getGlobalLinkTransform("ur5_robot1_tf/ee_link");
+
+        double end_effector_z_offset = 0.0;
+        Eigen::Affine3d tmp_transform(Eigen::Translation3d(Eigen::Vector3d(0.0, 0.0, end_effector_z_offset)));
+
+        Eigen::Affine3d newState = end_effector_state * tmp_transform;
+
+        geometry_msgs::Pose pose;
+        pose.position.x = newState.translation().x();
+        pose.position.y = newState.translation().y();
+        pose.position.z = newState.translation().z();
+
+        Eigen::Quaterniond quat(newState.rotation());
+        pose.orientation.w = quat.w();
+        pose.orientation.x = quat.x();
+        pose.orientation.y = quat.y();
+        pose.orientation.z = quat.z();
+
+        gazebo_msgs::ModelState model_state;
+
+        std::string wp_index = intToString(current_wp_rob1);
+        std::string model_name = "workpiece_" + wp_index;
+
+        model_state.model_name = model_name;
+        model_state.pose = pose;
+        model_state.reference_frame = "world";
+
+        gazebo_model_state_pub.publish(model_state);
+    }
 
 }
 
