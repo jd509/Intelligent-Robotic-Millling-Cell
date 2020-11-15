@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<robot name="robotiq_arg2f_85_model" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:arg name="gripper_name" default="gripper"/>
+
+  <xacro:include filename="$(find robotiq_2f_85_gripper_visualization)/urdf/robotiq_arg2f_85_model_macro.xacro" />
+  
+  <xacro:robotiq_arg2f_85 prefix="$(arg gripper_name)_" />
+
+</robot>

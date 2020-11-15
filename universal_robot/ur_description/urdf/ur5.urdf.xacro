@@ -16,11 +16,11 @@
 
   <xacro:macro name="ur5_robot" params="prefix joint_limited
     shoulder_pan_lower_limit:=${-2*pi}    shoulder_pan_upper_limit:=${2*pi}
-    shoulder_lift_lower_limit:=${-pi}    shoulder_lift_upper_limit:=${pi}
-    elbow_joint_lower_limit:=${-pi}    elbow_joint_upper_limit:=${pi}
-    wrist_1_lower_limit:=${-pi}    wrist_1_upper_limit:=${pi}
-    wrist_2_lower_limit:=${-pi}    wrist_2_upper_limit:=${pi}
-    wrist_3_lower_limit:=${-pi}    wrist_3_upper_limit:=${pi}
+    shoulder_lift_lower_limit:=${-2*pi}    shoulder_lift_upper_limit:=${2*pi}
+    elbow_joint_lower_limit:=${-2*pi}    elbow_joint_upper_limit:=${2*pi}
+    wrist_1_lower_limit:=${-2*pi}    wrist_1_upper_limit:=${2*pi}
+    wrist_2_lower_limit:=${-2*pi}    wrist_2_upper_limit:=${2*pi}
+    wrist_3_lower_limit:=${-2*pi}    wrist_3_upper_limit:=${2*pi}
     transmission_hw_interface:=hardware_interface/PositionJointInterface
     safety_limits:=false safety_pos_margin:=0.15
     safety_k_position:=20">
@@ -377,6 +377,41 @@
       <parent link="${prefix}wrist_3_link"/>
       <child link="${prefix}tool0"/>
     </joint>
+    <!-- <link name="${prefix}vacuum_gripper">
+      <gravity>0</gravity>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.005" length="0.01"/>
+        </geometry>
+        <material name="transparent">
+          <color rgba="0 0 0 0"/>
+        </material>
+      </visual>
+      <inertial>
+        <origin rpy="0 0 0" xyz="0.000000 0.000000 0.000000"/>
+        <mass value="0.0001"/>
+        <inertia ixx="1e-08" ixy="0" ixz="0" iyy="1e-08" iyz="0" izz="1e-08"/>
+      </inertial>
+    </link>
 
+    <joint name="${prefix}gripper_joint" type="revolute">
+      <axis xyz="1 0 0" />
+      <parent link="${prefix}ee_link" />
+      <child link="${prefix}vacuum_gripper" />
+      <origin rpy="0 1.5708 0" xyz="0.01 0.0125 0" />
+      <limit effort="50" velocity="50" lower="0" upper="0" />
+      <dynamics damping="0.0" friction="10"/>
+    </joint>
+
+  <gazebo>
+      <plugin name="gazebo_ros_vacuum_gripper" filename="libgazebo_ros_vacuum_gripper.so">
+        <robotNamespace>${prefix}vacuum_gripper</robotNamespace>
+        <bodyName>${prefix}vacuum_gripper</bodyName>
+        <topicName>grasping</topicName>
+        <maxDistance>0.05</maxDistance>
+        <minDistance>0.01</minDistance>
+      </plugin>
+  </gazebo> -->
   </xacro:macro>
 </robot>

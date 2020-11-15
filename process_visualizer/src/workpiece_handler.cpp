@@ -8,6 +8,13 @@ Workpiece_Object::Workpiece_Object()
     joint_states_robot2_sub = nh_workpiece.subscribe("ur5_robot2/joint_states", 1, &Workpiece_Object::rob2_jointstates_callback, this);
     initial_workpiece_pos_sub = nh_workpiece.subscribe("/initial_workpiece_pos", 100, &Workpiece_Object::load_workpiece_in_gazebo, this);
     spawnClient = nh_workpiece.serviceClient<gazebo_msgs::SpawnModel>("/gazebo/spawn_urdf_model");
+    attached_to_rob_1 = nh_workpiece.subscribe("/attached_to_rob_1", 1000, &Workpiece_Object::set_rob1_flag, this);
+
+    robot_model_loader::RobotModelLoader robot_model_loader("ur5_robot1/robot_description");
+    kinematic_model_ur5_1 = robot_model_loader.getModel();
+    kinematic_state_ur5_1 = robot_state::RobotStatePtr(new robot_state::RobotState(kinematic_model_ur5_1));
+
+    joint_model_group = kinematic_model_ur5_1->getJointModelGroup("manipulator");
 }
 
 std::string Workpiece_Object::intToString (int a) {
@@ -68,38 +75,54 @@ void Workpiece_Object::load_workpiece_in_gazebo(const geometry_msgs::Pose& p)
     num_of_workpieces_rob1 = num_of_workpieces_rob1+1;
 }
 
+void Workpiece_Object::set_rob1_flag(const std_msgs::String& msg)
+{
+    if(msg.data.compare("attached_rob1")==0)
+    {
+        robot_1_attached = true;
+    }
+    else if(msg.data.compare("detached_rob1")==0)
+    {
+        robot_1_attached = false;
+    }
+}
+
 void Workpiece_Object::rob1_jointstates_callback(const sensor_msgs::JointState &joint_states_current)
 {
     if(robot_1_attached == true)
     {
-        robot_model_loader::RobotModelLoader robot_model_loader("ur5_robot1/robot_description");
-        kinematic_model_ur5_1 = robot_model_loader.getModel();
-        kinematic_state_ur5_1 = robot_state::RobotStatePtr(new robot_state::RobotState(kinematic_model_ur5_1));
+        // std::vector<double> joint_states;
+        // for (size_t i = 0; i < joint_states_current.position.size() - 2; ++i)
+        // {
+        //     joint_states.push_back(joint_states_current.position[i + 2]);
+        // }
+        // kinematic_state_ur5_1->setJointGroupPositions(joint_model_group, joint_states);
+        // const Eigen::Affine3d &end_effector_state = kinematic_state_ur5_1->getGlobalLinkTransform("ur5_robot1_tf/tool0");
 
-        const robot_state::JointModelGroup *joint_model_group = kinematic_model_ur5_1->getJointModelGroup("manipulator");
-        std::vector<double> joint_states;
-        for (size_t i = 0; i < joint_states_current.position.size() - 2; ++i)
-        {
-            joint_states.push_back(joint_states_current.position[i + 2]);
+        // double end_effector_z_offset = 0.0001;
+        // Eigen::Affine3d tmp_transform(Eigen::Translation3d(Eigen::Vector3d(0.0, 0.0, end_effector_z_offset)));
+
+        // Eigen::Affine3d newState = end_effector_state * tmp_transform;
+
+        tf::StampedTransform transform;
+        try{
+            listener.lookupTransform("", "/ur5_robot1_tf/tool0",ros::Time(0),transform);
         }
-        kinematic_state_ur5_1->setJointGroupPositions(joint_model_group, joint_states);
-        const Eigen::Affine3d &end_effector_state = kinematic_state_ur5_1->getGlobalLinkTransform("ur5_robot1_tf/ee_link");
-
-        double end_effector_z_offset = 0.0;
-        Eigen::Affine3d tmp_transform(Eigen::Translation3d(Eigen::Vector3d(0.0, 0.0, end_effector_z_offset)));
-
-        Eigen::Affine3d newState = end_effector_state * tmp_transform;
+        catch(tf::TransformException &ex){
+            ROS_ERROR("%s", ex.what());
+            ros::Duration(1.0).sleep();
+        }
 
         geometry_msgs::Pose pose;
-        pose.position.x = newState.translation().x();
-        pose.position.y = newState.translation().y();
-        pose.position.z = newState.translation().z();
+        pose.position.x = transform.getOrigin().x();
+        pose.position.y = transform.getOrigin().y();
+        pose.position.z = transform.getOrigin().z();
 
-        Eigen::Quaterniond quat(newState.rotation());
-        pose.orientation.w = quat.w();
-        pose.orientation.x = quat.x();
-        pose.orientation.y = quat.y();
-        pose.orientation.z = quat.z();
+        pose.orientation.w = transform.getRotation().w();
+        pose.orientation.x = transform.getRotation().x();
+        pose.orientation.y = transform.getRotation().y();
+        pose.orientation.z = transform.getRotation().z();
+
 
         gazebo_msgs::ModelState model_state;
 

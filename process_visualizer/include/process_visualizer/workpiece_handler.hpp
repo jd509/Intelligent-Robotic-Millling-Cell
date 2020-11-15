@@ -25,6 +25,8 @@
 #include <geometric_shapes/shape_operations.h>
 #include <std_msgs/String.h>
 
+#include <tf/transform_listener.h>
+
 
 class Workpiece_Object{
 
@@ -40,12 +42,16 @@ public:
     ros::Subscriber joint_states_robot1_sub;
     ros::Subscriber joint_states_robot2_sub;
     ros::Subscriber initial_workpiece_pos_sub;
+    ros::Subscriber attached_to_rob_1;
 
     ros::ServiceClient spawnClient;
 
     //robot model loaders
     robot_model::RobotModelPtr kinematic_model_ur5_1;
     robot_state::RobotStatePtr kinematic_state_ur5_1;
+    const robot_state::JointModelGroup *joint_model_group;
+
+    tf::TransformListener listener;
 
 
     //Constructor and other functions
@@ -58,6 +64,8 @@ public:
     void rob1_jointstates_callback(const sensor_msgs::JointState &joint_states_current);
 
     void rob2_jointstates_callback(const sensor_msgs::JointState &joint_states_current);
+
+    void set_rob1_flag(const std_msgs::String & );
 
 };
 

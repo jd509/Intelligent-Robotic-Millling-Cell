@@ -6,4 +6,8 @@
 
   <include file="$(find coordinator)/launch/coordinator.launch"/>
 
+<!--Node to spawn workpieces-->
+  <node name="workpiece_handler" pkg="process_visualizer" type="workpiece_handler" output="screen"/>
+
+
 </launch>

@@ -33,6 +33,7 @@ class Coordinator
     ros::Publisher command_rob_2_pub;
     ros::Publisher send_update_pub;
     ros::Publisher coord_to_gazebo_pub;
+    ros::Publisher rob_1_attachment_pub;
     
     ros::Subscriber rob_1_sub;
     ros::Subscriber rob_2_sub;

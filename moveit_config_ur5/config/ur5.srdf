@@ -27,7 +27,8 @@
         <joint name="wrist_2_joint" value="1.6315" />
         <joint name="wrist_3_joint" value="-0.1041" />
     </group_state>
-    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <!--End Effector: Represent info about end effector-->
+    <!--VIRTUAL JOINT: Purpose: this elemnt defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="FixedBase" type="fixed" parent_frame="world" child_link="world" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base_link" link2="shoulder_link" reason="Adjacent" />

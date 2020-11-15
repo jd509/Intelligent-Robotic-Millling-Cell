@@ -28,9 +28,6 @@
 <!--Spawn a table for workpiece near robot 1 to pick up-->
   <node name="spawn_urdf_workpiece_table2" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece_table.urdf -urdf -x 0.8 -y -0.25 -z 0.005 -model workpiece_table_2" />
 
-<!--Node to spawn workpieces-->
-  <node name="workpiece_handler" pkg="process_visualizer" type="workpiece_handler" output="screen"/>
-
 <!--row 1-->
   <!-- <node name="spawn_urdf_wp" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.05 -y -0.05 -z 0.525 -model workpiece" /> -->
 

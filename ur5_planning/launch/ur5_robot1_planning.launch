@@ -14,6 +14,8 @@
   <!-- <node pkg="tf" type="static_transform_publisher" name="ur5_robot1" args="1 0.7 0.31 0 0 0 /world /base_link 30" /> -->
   <!-- update pose of robot in the ur5.robot.urdf.xacro file -->
 
+
+
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="false"/>
     <rosparam param="/source_list">[/joint_states]</rosparam>

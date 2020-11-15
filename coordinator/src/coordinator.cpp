@@ -7,11 +7,13 @@ Coordinator::Coordinator()
     command_rob_2_pub = nh_coord.advertise<std_msgs::String>("/command_rob_2", 1000);
     send_update_pub = nh_coord.advertise<std_msgs::String>("/coord_to_gui", 1000);
     coord_to_gazebo_pub = nh_coord.advertise<geometry_msgs::Pose>("/initial_workpiece_pos", 1000);
+    rob_1_attachment_pub = nh_coord.advertise<std_msgs::String>("/attached_to_rob_1", 1000);
 
     rob_1_sub = nh_coord.subscribe("/rob1_to_coord", 1000, &Coordinator::rob1_callback, this);
     rob_2_sub = nh_coord.subscribe("/rob2_to_coord", 1000, &Coordinator::rob2_callback, this);
     gui_msgs_sub = nh_coord.subscribe("/gui_to_coord", 1000, &Coordinator::gui_callback, this);
     num_of_wp_sub = nh_coord.subscribe("/num_wp", 1000, &Coordinator::load_workpieces, this);
+
 }
 
 void Coordinator::initialize_robots()
@@ -52,6 +54,12 @@ void Coordinator::rob1_callback(const std_msgs::String& str)
         std::cout<<"Robot 1 initialized \n";
         std::cout<<"###################################### \n";
     }
+    else if(str.data.compare("attached_rob1") == 0)
+    {
+        std_msgs::String msg;
+        msg.data = "attached_rob1";
+        rob_1_attachment_pub.publish(msg);
+    }
 }
 
 void Coordinator::rob2_callback(const std_msgs::String& str)
@@ -87,6 +95,16 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         pick_msg.data = "start_pickup_rob1";
         command_rob_1_pub.publish(pick_msg);
 
+    }
+
+    else if (str.data.compare("place_workpiece_rob1")==0)
+    {
+        std::cout<<"###################################### \n";
+        std::cout<<"Initializing Pickup by Robot 1 \n";
+        std::cout<<"###################################### \n";
+        std_msgs::String place_msg;
+        place_msg.data = "start_place_rob1";
+        command_rob_1_pub.publish(place_msg);
     }
 }
 

@@ -16,8 +16,9 @@ Move_Group_Robot_1::Move_Group_Robot_1()
     // ur5_robot1_group_ptr->setGoalPositionTolerance(0.1);
     // ur5_robot1_group_ptr->setGoalOrientationTolerance(0.1);
 
-    ur5_robot1_group_ptr->setGoalTolerance(0.1);
-    ur5_robot1_group_ptr->setPlanningTime(7.0);
+    ur5_robot1_group_ptr->setGoalTolerance(0.01);
+    // ur5_robot1_group_ptr->setPlanningTime(5.0);
+    ur5_robot1_group_ptr->allowReplanning(true);
 
     for(auto i:joint_names)
     {
@@ -48,28 +49,35 @@ void Move_Group_Robot_1::perform_actions(const std_msgs::String& msg)
 {
   if(msg.data.compare("start_robot_initialization") == 0)
   {
-    std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
+    std::vector<double> target_joint_angles = {-0.0349066, -1.69297,2.0944 ,-1.98968,-1.5708 ,1.29154};
     move_to_configuration(target_joint_angles);
+    moveit_msgs::PlanningScene planning_scene;
+
     send_update("robot_1_intialization_complete");
 
     //Adding other collision objects to world after initialization
-    add_workpiece_table();
-    add_workpiece_table_2();
+    // add_robot_table();
+    // add_workpiece_table();
+    // add_workpiece_table_2();
   }
   else if(msg.data.compare("start_pickup_rob1")==0)
   {
     pick();
+  }
+  else if(msg.data.compare("start_place_rob1")==0)
+  {
+    place();
   }
 }
 
 void Move_Group_Robot_1::add_workpieces(const geometry_msgs::Pose &p)
 {
   //Intializing Collision Object for workpiece table
-  moveit_msgs::CollisionObject workpiece;
-  workpiece.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
+  moveit_msgs::AttachedCollisionObject workpiece;
+  workpiece.object.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
   std::string workpiece_id_generate;
   workpiece_id_generate = "workpiece_" + intToString(workpiece_id);
-  workpiece.id = workpiece_id_generate;
+  workpiece.object.id = workpiece_id_generate;
 
   //Creating a mesh from stl of workpiece
   std::string mesh_file_for_table = "package://process_visualizer/resources/workpiece.stl";
@@ -93,12 +101,12 @@ void Move_Group_Robot_1::add_workpieces(const geometry_msgs::Pose &p)
   table_pose.position.z = p.position.z;
 
   //Adding mesh to collision object
-  workpiece.meshes.push_back(table_mesh_);
-  workpiece.mesh_poses.push_back(table_pose);
+  workpiece.object.meshes.push_back(table_mesh_);
+  workpiece.object.mesh_poses.push_back(table_pose);
   wp_pos.emplace_back(table_pose);
-  workpiece.operation = workpiece.ADD;
+  workpiece.object.operation = workpiece.object.ADD;
 
-  add_collision_obj_to_world(workpiece, workpiece_id_generate);
+  add_collision_obj_to_world(workpiece.object, workpiece_id_generate);
   workpiece_id++;
 }
 
@@ -229,39 +237,91 @@ void Move_Group_Robot_1::add_workpiece_table_2()
 
 void Move_Group_Robot_1::pick()
 {
-  std::vector<moveit_msgs::Grasp> grasps;
-  grasps.resize(1);
+  //Using cartesian path planning
 
-  //setting grasp pose
-  grasps[0].grasp_pose.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
-  tf2::Quaternion orientation;
-  orientation.setRPY(-M_PI / 2, -M_PI / 4, -M_PI / 2);
-  grasps[0].grasp_pose.pose.orientation = tf2::toMsg(orientation);
-  grasps[0].grasp_pose.pose.position.x = wp_pos[current_wp].position.x;
-  grasps[0].grasp_pose.pose.position.y = wp_pos[current_wp].position.y;
-  grasps[0].grasp_pose.pose.position.z = wp_pos[current_wp].position.z;
+  //Moving to point above workpiece
+  geometry_msgs::Pose target_pose; 
+  target_pose = ur5_robot1_group_ptr->getCurrentPose().pose;
+  target_pose.position.x = wp_pos[current_wp].position.x;
+  target_pose.position.y = wp_pos[current_wp].position.y;
+  target_pose.position.z = wp_pos[current_wp].position.z + 0.1;
+  std::cout<<"Target Pose: "<<target_pose;
+  move_to_pose(target_pose);
+  ur5_robot1_group_ptr->setStartStateToCurrentState();
 
-  //setting pre grasp pose
-  grasps[0].pre_grasp_approach.direction.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
-  grasps[0].pre_grasp_approach.direction.vector.x = 1.0;
-  grasps[0].pre_grasp_approach.min_distance = 0.095;
-  grasps[0].pre_grasp_approach.desired_distance = 0.115;
+  //grapsing position
+  std::vector<geometry_msgs::Pose> waypoints;
+  waypoints.push_back(target_pose);
 
-  //setting post grasp retreat
-  grasps[0].post_grasp_retreat.direction.header.frame_id = ur5_robot1_group_ptr->getPlanningFrame();
-  grasps[0].post_grasp_retreat.direction.vector.z = 1.0;
-  grasps[0].post_grasp_retreat.min_distance = 0.1;
-  grasps[0].post_grasp_retreat.desired_distance = 0.25;  
+  target_pose.position.z = wp_pos[current_wp].position.z;
+  std::cout<<"Target Pose: "<<target_pose;
+  waypoints.push_back(target_pose);
 
-  //picking up object
-  ur5_robot1_group_ptr->setSupportSurfaceName("workpiece_table_1");
+  ur5_robot1_group_ptr->setMaxVelocityScalingFactor(0.1);
+  moveit_msgs::RobotTrajectory trajectory;
+  const double jump_threshold = 0.0;
+  const double eef_step = 0.01;
   
-  std::string object_name = "workpiece_" + intToString(current_wp);
-  ur5_robot1_group_ptr->pick(object_name, grasps);
+  target_pose.position.z = wp_pos[current_wp].position.z+0.1;
+  waypoints.push_back(target_pose);
+  
+  double fraction = ur5_robot1_group_ptr->computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
+
+
+
+
+  ur5_robot1_group_ptr->execute(trajectory);
+  // ros::Duration(1.0).sleep();
+  ur5_robot1_group_ptr->setStartStateToCurrentState();
+
+  //Attaching object to robot
+  // send_update("attached_rob1");
+
 }
+
+void Move_Group_Robot_1::place()
+{
+  //pre place location
+  std::vector<double>joint_angles = {-1.90241, -1.85005, 2.11185, -1.85005, -1.55334, 0.750492};
+  move_to_configuration(joint_angles);
+  ur5_robot1_group_ptr->setStartStateToCurrentState();
+
+  //place location
+  std::vector<double> place_joint_angles = {-1.58825, -0.802851, 0.907571, -1.65806, -1.55334, 0.750492};
+  move_to_configuration(place_joint_angles);
+  ur5_robot1_group_ptr->setStartStateToCurrentState();
+
+  //For testing
+  std::vector<double> target_joint_angles = {-0.0349066, -1.69297,2.0944 ,-1.98968,-1.5708 ,1.29154};
+  move_to_configuration(target_joint_angles);
+  ur5_robot1_group_ptr->setStartStateToCurrentState();
+  current_wp ++;
+}
+
+void Move_Group_Robot_1::move_to_pose(geometry_msgs::Pose target_p)
+{
+  moveit_msgs::PlanningScene planning_scene;
+  ur5_robot1_group_ptr->setStartStateToCurrentState();
+  geometry_msgs::Pose start_pose;
+  start_pose = ur5_robot1_group_ptr->getCurrentPose().pose;
+  std::cout<<"Start Pose: "<<start_pose;
+
+  ur5_robot1_group_ptr->setPoseTarget(target_p);
+  std::cout<<"Target Pose: "<<target_p;
+
+  bool success = (ur5_robot1_group_ptr->plan(ur5_robot1_goal_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+  ur5_robot1_group_ptr->move();
+  planning_scene.is_diff = true;
+  planning_scene_diff_publisher.publish(planning_scene);
+
+}
+
+
 
 void Move_Group_Robot_1::move_to_configuration(std::vector<double>& joint_angles)
 {
+  moveit_msgs::PlanningScene planning_scene;
   ur5_robot1_group_ptr->setStartStateToCurrentState();
 
   ur5_robot1_group_ptr->setJointValueTarget(joint_angles);
@@ -269,6 +329,9 @@ void Move_Group_Robot_1::move_to_configuration(std::vector<double>& joint_angles
   bool success = (ur5_robot1_group_ptr->plan(ur5_robot1_goal_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
   ur5_robot1_group_ptr->move();
+  planning_scene.is_diff = true;
+  planning_scene_diff_publisher.publish(planning_scene);
+
   std::cout<<ur5_robot1_goal_plan.trajectory_.joint_trajectory.points[0]<<std::endl;
   std::cout<<ur5_robot1_goal_plan.trajectory_.joint_trajectory.points.back()<<std::endl;
 }
@@ -281,7 +344,7 @@ int main(int argc, char** argv)
   spinner.start();
   Move_Group_Robot_1 rob1_obj;
         
-  rob1_obj.add_robot_table();
+  //rob1_obj.add_robot_table();
 
   std::cout<<"Robot Table added as a Collision Object"<<std::endl;
 

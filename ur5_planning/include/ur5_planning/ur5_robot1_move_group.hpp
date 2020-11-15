@@ -81,7 +81,11 @@ public:
 
     void pick();
 
+    void place();
+
     std::string intToString (int a);
+
+    void move_to_pose(geometry_msgs::Pose );
 
 };
 
