@@ -1,6 +1,7 @@
 #include "process_visualizer/workpiece_handler.hpp"
 
 bool robot_1_attached = false;
+bool robot_2_attached = false;
 Workpiece_Object::Workpiece_Object()
 {
     gazebo_model_state_pub = nh_workpiece.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state", 1);
@@ -118,7 +119,27 @@ void Workpiece_Object::set_rob1_flag(const std_msgs::String& msg)
         p.orientation.y = 0.0;
         p.orientation.z = 0.0;
         spawn_model(model_name, p);
-        // current_wp_rob1 ++;
+        current_wp_rob1 ++;
+    }
+    else if(msg.data.compare("attached_rob2")==0)
+    {
+        robot_2_attached = true;
+    }
+    else if(msg.data.compare("detached_rob2")==0)
+    {
+        robot_2_attached = false;
+        std::string wp_index = intToString(current_wp_rob2);
+        std::string model_name = "workpiece_" + wp_index;
+        geometry_msgs::Pose p;
+        p.position.x = bin_1_pos[0][0];
+        p.position.y = bin_1_pos[0][1];
+        p.position.z = bin_1_pos[0][2];
+        p.orientation.w = 1.0;
+        p.orientation.x = 0.0;
+        p.orientation.y = 0.0;
+        p.orientation.z = 0.0;
+        spawn_model(model_name, p);
+        current_wp_rob2 ++;
     }
 }
 void Workpiece_Object::remove(std::string model_name)
@@ -240,7 +261,64 @@ void Workpiece_Object::rob1_jointstates_callback(const gazebo_msgs::LinkStates& 
 
 void Workpiece_Object::rob2_jointstates_callback(const sensor_msgs::JointState &joint_states_current)
 {
+    if(robot_2_attached == true)
+    {
+        // std::vector<double> joint_states;
+        // for (size_t i = 0; i < joint_states_current.position.size() - 2; ++i)
+        // {
+        //     joint_states.push_back(joint_states_current.position[i + 2]);
+        // }
+        // kinematic_state_ur5_1->setJointGroupPositions(joint_model_group, joint_states);
+        // const Eigen::Affine3d &end_effector_state = kinematic_state_ur5_1->getGlobalLinkTransform("ur5_robot1_tf/tool0");
 
+        // double end_effector_z_offset = 0.0001;
+        // Eigen::Affine3d tmp_transform(Eigen::Translation3d(Eigen::Vector3d(0.0, 0.0, end_effector_z_offset)));
+
+        // Eigen::Affine3d newState = end_effector_state * tmp_transform;
+
+        // tf::StampedTransform transform;
+        // try{
+        //     listener.lookupTransform("/ur5_robot1_tf/ee_link", "/ur5_robot1_tf/world",ros::Time(0),transform);
+        // }
+        // catch(tf::TransformException &ex){
+        //     ROS_ERROR("%s", ex.what());
+        //     ros::Duration(1.0).sleep();
+        // }
+
+        std::string wp_index = intToString(current_wp_rob2);
+        std::string model_name = "workpiece_" + wp_index;
+        remove(model_name);
+
+        // model_state.model_name = model_name;
+        // model_state.pose = pose;
+
+
+
+
+        // std::string link_name = "ur5_robot1::wrist_3_link";
+        // std::cout<<link_name<<std::endl;
+        // geometry_msgs::Pose pose;
+
+        // std::vector<std::string> link_names;
+
+        // for(auto i:state.name)
+        // {
+        //     link_names.push_back(i);
+        //     std::cout<<i<<std::endl;
+        // }
+        // int id = getIndex(link_names, link_name);
+        // std::cout<<id<<std::endl;
+        // pose = state.pose[id];
+
+        // std::cout<<pose<<std::endl;
+
+
+        // model_state.reference_frame = "world";
+
+        // gazebo_model_state_pub.publish(model_state);
+        ros::Duration D(2);
+        D.sleep();
+    }
 }
 
 int main(int argc, char**argv)

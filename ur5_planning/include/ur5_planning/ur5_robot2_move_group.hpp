@@ -26,7 +26,12 @@ public:
     ros::NodeHandle node_handle_rob2;
     ros::Subscriber receive_data_from_coord_sub;
     ros::Publisher send_update_pub;
+    ros::Publisher planning_scene_diff_publisher;
+
     std_msgs::String update_msg;
+    std::vector<std::vector<double>> bin_1_pos = {{1.53, -0.43, 0.56},{1.53, -0.6, 0.56}};
+    std::vector<std::vector<double>> bin_2_pos = {{1.53, -0.85, 0.56},{1.53, -0.97, 0.56}};
+    std::vector<double> milling_table_pos;
 
     std::string PLANNING_GROUP = "manipulator";
     std::string ROBOT_DESCRIPTION = "ur5_robot2/robot_description";
@@ -46,6 +51,8 @@ public:
     
     std::vector<std::string> joint_names;
     std::vector<std::string> link_names;
+    int bin1_wp = 0;
+    int bin2_wp = 0;
 
 
     //Functions to perform operations
@@ -57,7 +64,19 @@ public:
 
     void send_update(std::string );
 
+    std::string intToString (int a);
+
     void perform_actions(const std_msgs::String& );
+
+    void pick();
+
+    void place_bin1();
+
+    void place_bin2();
+
+    void place_fr_milling();
+
+    void move_to_pose(geometry_msgs::Pose target_p);
 
 };
 

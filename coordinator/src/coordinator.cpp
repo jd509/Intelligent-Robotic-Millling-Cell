@@ -80,6 +80,20 @@ void Coordinator::rob2_callback(const std_msgs::String& str)
         std::cout<<"###################################### \n";
         send_update_to_gui("All robots initialized");
     }
+    else if(str.data.compare("attached_rob2") == 0)
+    {
+        std_msgs::String msg;
+        msg.data = "attached_rob2";
+        send_update_to_gui("Workpiece picked by the robot");
+        rob_1_attachment_pub.publish(msg);
+    }
+    else if(str.data.compare("workpiece_placed")==0)
+    {
+        std_msgs::String msg;
+        msg.data = "detached_rob2";
+        rob_1_attachment_pub.publish(msg);        
+        send_update_to_gui("Workpiece placed by the robot");
+    }
 }
 
 void Coordinator::gui_callback(const std_msgs::String& str)
@@ -109,7 +123,7 @@ void Coordinator::gui_callback(const std_msgs::String& str)
     else if (str.data.compare("place_workpiece_rob1")==0)
     {
         std::cout<<"###################################### \n";
-        std::cout<<"Initializing Pickup by Robot 1 \n";
+        std::cout<<"Initializing Placement by Robot 1 \n";
         std::cout<<"###################################### \n";
         std_msgs::String place_msg;
         place_msg.data = "start_place_rob1";
@@ -133,9 +147,27 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         service_msg.request.image_number.data = 1;
         deep_learning_service.call(service_msg);
         std::cout<<"service called \n";
-        std::string update = service_msg.response.class_label;
-        std::cout<<update;
-        send_update_to_gui(update);
+        classification_label = service_msg.response.class_label;
+        std::cout<<classification_label;
+        send_update_to_gui(classification_label);
+    }
+    else if(str.data.compare("pick_workpiece_rob2")==0)
+    {
+        std::cout<<"###################################### \n";
+        std::cout<<"Initializing Pickup by Robot 2 \n";
+        std::cout<<"###################################### \n";
+        std_msgs::String pick_msg;
+        pick_msg.data = "start_pickup_rob2";
+        command_rob_2_pub.publish(pick_msg);
+    }
+    else if(str.data.compare("segregate_workpiece_rob2")==0)
+    {
+        std::cout<<"###################################### \n";
+        std::cout<<"Initializing Pickup by Robot 2 \n";
+        std::cout<<"###################################### \n";
+        std_msgs::String pick_msg;
+        pick_msg.data = classification_label;;
+        command_rob_2_pub.publish(pick_msg);
     }
     
     

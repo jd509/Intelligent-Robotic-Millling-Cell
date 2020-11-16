@@ -27,6 +27,7 @@ class Coordinator
     public:
     ros::NodeHandle nh_coord;
     std_msgs::String msg_to_gui;
+    std::string classification_label;
 
 
     //Ros Publishers

@@ -18,10 +18,12 @@ Move_Group_Robot_2::Move_Group_Robot_2()
     }
     // std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
     // move_to_configuration(target_joint_angles);
-
+    ur5_robot2_group_ptr->setGoalTolerance(0.01);
+    ur5_robot2_group_ptr->allowReplanning(true);
     //ROS publishers and subscribers
     receive_data_from_coord_sub = node_handle_rob2.subscribe("/command_rob_2", 1000, &Move_Group_Robot_2::perform_actions,this);
     send_update_pub = node_handle_rob2.advertise<std_msgs::String>("/rob2_to_coord", 1000);
+    planning_scene_diff_publisher = node_handle_rob2.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
 
 }
 
@@ -41,7 +43,30 @@ void Move_Group_Robot_2::perform_actions(const std_msgs::String& msg)
     move_to_configuration(target_joint_angles);
     send_update("robot_2_intialization_complete");
   }
+  if(msg.data.compare("start_pickup_rob2")==0)
+  {
+    pick();
+  }
+  if(msg.data.compare("Crazing")==0)
+  {
+    place_bin1();
+  }
+  if(msg.data.compare("Inclusion")==0)
+  {
+    place_bin2();
+  }
+  if(msg.data.compare("No_Defect")==0)
+  {
+    //place_fr_milling();
+  }
 }
+
+std::string Move_Group_Robot_2::intToString (int a) {
+    std::stringstream ss;
+    ss << a;
+    return ss.str();
+  }
+
 
 void Move_Group_Robot_2::add_robot_table()
 {
@@ -81,8 +106,126 @@ void Move_Group_Robot_2::add_robot_table()
   planning_scene_interface.addCollisionObjects(collision_objects);
 }
 
+void Move_Group_Robot_2::pick()
+{
+  //Pickup Location
+  double x = 1.1, y = -0.08, z = 0.525;
+
+  //Setting Pre Grasp Pose
+  geometry_msgs::Pose target_pose; 
+  target_pose = ur5_robot2_group_ptr->getCurrentPose().pose;
+  target_pose.position.x = x;
+  target_pose.position.y = y;
+  target_pose.position.z = z + 0.1;
+  std::cout<<"Target Pose: "<<target_pose;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  //grapsing position
+  std::vector<geometry_msgs::Pose> waypoints;
+  waypoints.push_back(target_pose);
+
+  target_pose.position.z = z;
+  std::cout<<"Target Pose: "<<target_pose;
+  waypoints.push_back(target_pose);
+
+  ur5_robot2_group_ptr->setMaxVelocityScalingFactor(0.1);
+  moveit_msgs::RobotTrajectory trajectory;
+  const double jump_threshold = 0.0;
+  const double eef_step = 0.01;
+  
+  target_pose.position.z = z+0.1;
+  waypoints.push_back(target_pose);
+  
+  double fraction = ur5_robot2_group_ptr->computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
+
+
+
+
+  ur5_robot2_group_ptr->execute(trajectory);
+  // ros::Duration(1.0).sleep();
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+
+  //Attaching object to robot
+  send_update("attached_rob2");
+
+}
+
+void Move_Group_Robot_2::place_bin1()
+{
+  //pre place location
+  geometry_msgs::Pose pre_place_pose;
+  geometry_msgs::Pose target_pose; 
+  target_pose = ur5_robot2_group_ptr->getCurrentPose().pose;
+  target_pose.position.x = bin_1_pos[bin1_wp][0];
+  target_pose.position.y = bin_1_pos[bin1_wp][1];
+  target_pose.position.z = bin_1_pos[bin1_wp][2] + 0.2;
+  std::cout<<"Target Pose: "<<target_pose;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  //place position
+  target_pose.position.z = bin_1_pos[bin1_wp][2] +0.01;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  send_update("workpiece_placed");
+//  Adding stoppage time after placing
+  ros::Duration(4.0).sleep(); 
+
+
+  //pre-retract pos
+  target_pose.position.z = bin_1_pos[bin1_wp][2] +0.2;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  //Retract
+  std::vector<double> target_joint_angles = {1.51844, -1.53589, 1.51844, -1.58825, -1.58825, 0.0001};
+  move_to_configuration(target_joint_angles);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+  bin1_wp ++;
+}
+
+void Move_Group_Robot_2::place_bin2()
+{
+  //pre place location
+  geometry_msgs::Pose pre_place_pose; 
+  geometry_msgs::Pose target_pose;
+  target_pose = ur5_robot2_group_ptr->getCurrentPose().pose;
+  target_pose.position.x = bin_2_pos[bin2_wp][0];
+  target_pose.position.y = bin_2_pos[bin2_wp][1];
+  target_pose.position.z = bin_2_pos[bin2_wp][2] + 0.2;
+  std::cout<<"Target Pose: "<<target_pose;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  //place position
+  target_pose.position.z = bin_2_pos[bin2_wp][2] +0.01;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  send_update("workpiece_placed");
+//  Adding stoppage time after placing
+  ros::Duration(4.0).sleep(); 
+
+
+  //pre-retract pos
+  target_pose.position.z = bin_2_pos[bin2_wp][2] +0.2;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  //Retract
+  std::vector<double> target_joint_angles = {1.51844, -1.53589, 1.51844, -1.58825, -1.58825, 0.0001};
+  move_to_configuration(target_joint_angles);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+  bin2_wp ++;
+}
+
+
 void Move_Group_Robot_2::move_to_configuration(std::vector<double>& joint_angles)
 {
+  moveit_msgs::PlanningScene planning_scene;
   ur5_robot2_group_ptr->setStartStateToCurrentState();
 
   ur5_robot2_group_ptr->setJointValueTarget(joint_angles);
@@ -90,8 +233,31 @@ void Move_Group_Robot_2::move_to_configuration(std::vector<double>& joint_angles
   bool success = (ur5_robot2_group_ptr->plan(ur5_robot2_goal_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
   ur5_robot2_group_ptr->move();
+
+  planning_scene.is_diff = true;
+  planning_scene_diff_publisher.publish(planning_scene);
+
   std::cout<<ur5_robot2_goal_plan.trajectory_.joint_trajectory.points[0]<<std::endl;
   std::cout<<ur5_robot2_goal_plan.trajectory_.joint_trajectory.points.back()<<std::endl;
+}
+
+void Move_Group_Robot_2::move_to_pose(geometry_msgs::Pose target_p)
+{
+  moveit_msgs::PlanningScene planning_scene;
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+  geometry_msgs::Pose start_pose;
+  start_pose = ur5_robot2_group_ptr->getCurrentPose().pose;
+  std::cout<<"Start Pose: "<<start_pose;
+
+  ur5_robot2_group_ptr->setPoseTarget(target_p);
+  std::cout<<"Target Pose: "<<target_p;
+
+  bool success = (ur5_robot2_group_ptr->plan(ur5_robot2_goal_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+  ur5_robot2_group_ptr->move();
+  planning_scene.is_diff = true;
+  planning_scene_diff_publisher.publish(planning_scene);
+
 }
 
 

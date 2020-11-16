@@ -58,6 +58,9 @@ public:
     tf::TransformListener listener;
     gazebo_msgs::LinkStates state;
 
+    std::vector<std::vector<double>> bin_1_pos = {{1.53, -0.43, 0.56},{1.53, -0.6, 0.56}};
+    std::vector<std::vector<double>> bin_2_pos = {{1.53, -0.85, 0.56},{1.53, -0.97, 0.56}};
+
 
     //Constructor and other functions
     Workpiece_Object();
