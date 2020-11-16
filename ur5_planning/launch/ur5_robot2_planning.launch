@@ -13,10 +13,10 @@
   <!-- If needed, broadcast static tf for robot root -->
   <!-- <node pkg="tf" type="static_transform_publisher" name="ur5_robot2" args="1 -0.7 0.31 0 0 0 world ur5_robot2/base_link 30" /> -->
 
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="false"/>
     <rosparam param="/source_list">[/joint_states]</rosparam>
-  </node>
+  </node> -->
 
   <include file="$(find moveit_config_ur5)/launch/move_group.launch">
     <arg name="publish_monitored_planning_scene" value="true"/>
@@ -25,9 +25,9 @@
     <arg name="rob_rpy" value="$(arg rob_rpy)"/>
   </include>
 
-  <!-- <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot2.launch">
+  <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot2.launch">
     <arg name="config" value="true"/>
-  </include> -->
+  </include>
 
   <node name="ur5_robot2_planning" pkg="ur5_planning" type="ur5_robot2_move_group" respawn="false" output="screen"/>
 

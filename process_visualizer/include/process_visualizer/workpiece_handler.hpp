@@ -26,6 +26,9 @@
 #include <std_msgs/String.h>
 
 #include <tf/transform_listener.h>
+#include <gazebo_msgs/LinkStates.h>
+#include <gazebo_msgs/DeleteModel.h>
+
 
 
 class Workpiece_Object{
@@ -45,6 +48,7 @@ public:
     ros::Subscriber attached_to_rob_1;
 
     ros::ServiceClient spawnClient;
+    ros::ServiceClient deleteModelClient; 
 
     //robot model loaders
     robot_model::RobotModelPtr kinematic_model_ur5_1;
@@ -52,6 +56,7 @@ public:
     const robot_state::JointModelGroup *joint_model_group;
 
     tf::TransformListener listener;
+    gazebo_msgs::LinkStates state;
 
 
     //Constructor and other functions
@@ -61,12 +66,17 @@ public:
 
     void load_workpiece_in_gazebo(const geometry_msgs::Pose& p);
 
-    void rob1_jointstates_callback(const sensor_msgs::JointState &joint_states_current);
+    void rob1_jointstates_callback(const gazebo_msgs::LinkStates& state);
 
     void rob2_jointstates_callback(const sensor_msgs::JointState &joint_states_current);
 
     void set_rob1_flag(const std_msgs::String & );
 
+    int getIndex(std::vector<std::string> v, std::string K);
+
+    void remove(std::string model_name);
+
+    void spawn_model(std::string model_name, geometry_msgs::Pose p);
 };
 
 

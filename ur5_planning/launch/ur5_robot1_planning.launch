@@ -16,10 +16,10 @@
 
 
 
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="false"/>
     <rosparam param="/source_list">[/joint_states]</rosparam>
-  </node>
+  </node> -->
 
   <include file="$(find moveit_config_ur5)/launch/move_group.launch">
     <arg name="publish_monitored_planning_scene" value="true"/>
@@ -29,9 +29,9 @@
   </include>
 
 <!--To launch Rviz for MoveIt-->
-  <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot1.launch">
+  <!-- <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot1.launch">
     <arg name="config" value="true"/>
-  </include>
+  </include> -->
 
   <node name="ur5_robot1_planning" pkg="ur5_planning" type="ur5_robot1_move_group" respawn="true" output="screen"/>
  </group>

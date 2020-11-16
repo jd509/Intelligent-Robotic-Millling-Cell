@@ -58,7 +58,15 @@ void Coordinator::rob1_callback(const std_msgs::String& str)
     {
         std_msgs::String msg;
         msg.data = "attached_rob1";
+        send_update_to_gui("Workpiece picked by the robot");
         rob_1_attachment_pub.publish(msg);
+    }
+    else if(str.data.compare("workpiece_placed")==0)
+    {
+        std_msgs::String msg;
+        msg.data = "detached_rob1";
+        rob_1_attachment_pub.publish(msg);        
+        send_update_to_gui("Workpiece placed by the robot");
     }
 }
 

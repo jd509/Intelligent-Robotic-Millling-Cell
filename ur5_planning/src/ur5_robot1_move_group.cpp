@@ -274,9 +274,9 @@ void Move_Group_Robot_1::pick()
   // ros::Duration(1.0).sleep();
   ur5_robot1_group_ptr->setStartStateToCurrentState();
 
-  //Attaching object to robot
-  // send_update("attached_rob1");
 
+  //Attaching object to robot
+  send_update("attached_rob1");
 }
 
 void Move_Group_Robot_1::place()
@@ -290,6 +290,11 @@ void Move_Group_Robot_1::place()
   std::vector<double> place_joint_angles = {-1.58825, -0.802851, 0.907571, -1.65806, -1.55334, 0.750492};
   move_to_configuration(place_joint_angles);
   ur5_robot1_group_ptr->setStartStateToCurrentState();
+
+  send_update("workpiece_placed");
+
+//  Adding stoppage time after placing
+  ros::Duration(4.0).sleep(); 
 
   //For testing
   std::vector<double> target_joint_angles = {-0.0349066, -1.69297,2.0944 ,-1.98968,-1.5708 ,1.29154};
