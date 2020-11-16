@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
   std_msgs
+  deep_learning_model
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,7 +106,8 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
 #  LIBRARIES coordinator
-#  CATKIN_DEPENDS geometry_msgs roscpp std_msgs
+ CATKIN_DEPENDS 
+ deep_learning_model
 #  DEPENDS system_lib
 )
 

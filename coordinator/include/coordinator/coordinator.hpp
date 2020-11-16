@@ -18,6 +18,7 @@
 #include <std_msgs/Int32MultiArray.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseArray.h>
+#include "deep_learning_model/CNN.h"
 
 
 
@@ -40,8 +41,10 @@ class Coordinator
     ros::Subscriber gui_msgs_sub;
     ros::Subscriber num_of_wp_sub;
 
-    std::vector<std::vector<float>>wp_position = {{1.36,0.6,0.525}, {1.36,0.75,0.525}, {1.36,0.9,0.525},{1.53,0.6,0.525}, {1.53,0.75,0.525},{1.53,0.9,0.525},{1.7,0.6,0.525},{1.7,0.75,0.525},{1.7,0.9,0.525}};
+    ros::ServiceClient deep_learning_service;
 
+    std::vector<std::vector<float>>wp_position = {{1.36,0.6,0.525}, {1.36,0.75,0.525}, {1.36,0.9,0.525},{1.53,0.6,0.525}, {1.53,0.75,0.525},{1.53,0.9,0.525},{1.7,0.6,0.525},{1.7,0.75,0.525},{1.7,0.9,0.525}};
+    
     //Constructors and other functions
     Coordinator();
 

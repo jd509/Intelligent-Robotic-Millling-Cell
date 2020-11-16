@@ -2,4 +2,6 @@
 
     <node name="Coordinator" pkg="coordinator" type="coordinator" output="screen"/>
 
+    <include file="$(find deep_learning_model)/launch/deep_learning.launch"/>
+
 </launch>

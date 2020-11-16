@@ -1,0 +1,8 @@
+bool train		
+bool classify
+std_msgs/Int16 image_number
+
+---
+
+string status
+string class_label

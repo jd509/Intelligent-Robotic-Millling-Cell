@@ -59,6 +59,10 @@ class MyPlugin(Plugin):
         self._widget.pick_workpiece_rob2_btn.clicked[bool].connect(self.pick_workpiece_rob2)
         self._widget.segregate_workpiece_btn.clicked[bool].connect(self.segregate_workpiece)
 
+        ##CNN------------------->
+        self._widget.train_model_btn.clicked[bool].connect(self.train_model)
+        self._widget.classify_btn.clicked[bool].connect(self.classify_image)
+
         #------------------------------------------------
 
         if context.serial_number() > 1:
@@ -109,6 +113,13 @@ class MyPlugin(Plugin):
         self._widget.gui_status_txtbx.setText(status)
         pass
 
+    def train_model(self):
+        self.publish_msg_to_coord('train_model')
+        pass
+
+    def classify_image(self):
+        self.publish_msg_to_coord('classify_image')
+        pass
 
     ###Rqt functions
     def shutdown_plugin(self):

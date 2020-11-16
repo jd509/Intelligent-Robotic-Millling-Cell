@@ -14,6 +14,7 @@ Coordinator::Coordinator()
     gui_msgs_sub = nh_coord.subscribe("/gui_to_coord", 1000, &Coordinator::gui_callback, this);
     num_of_wp_sub = nh_coord.subscribe("/num_wp", 1000, &Coordinator::load_workpieces, this);
 
+    deep_learning_service = nh_coord.serviceClient<deep_learning_model::CNN>("/classify_image");
 }
 
 void Coordinator::initialize_robots()
@@ -114,6 +115,30 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         place_msg.data = "start_place_rob1";
         command_rob_1_pub.publish(place_msg);
     }
+
+    else if(str.data.compare("train_model")==0)
+    {
+        std::cout<<"Training CNN model \n";
+        deep_learning_model::CNN service_msg;
+        service_msg.request.train = true;
+        deep_learning_service.call(service_msg);
+        std::string update = service_msg.response.status;
+        send_update_to_gui(update);
+    }
+    else if(str.data.compare("classify_image")==0)
+    {
+        std::cout<<"Classifying image \n";
+        deep_learning_model::CNN service_msg;
+        service_msg.request.classify = true;
+        service_msg.request.image_number.data = 1;
+        deep_learning_service.call(service_msg);
+        std::cout<<"service called \n";
+        std::string update = service_msg.response.class_label;
+        std::cout<<update;
+        send_update_to_gui(update);
+    }
+    
+    
 }
 
 void Coordinator::send_update_to_gui(std::string str_msg)

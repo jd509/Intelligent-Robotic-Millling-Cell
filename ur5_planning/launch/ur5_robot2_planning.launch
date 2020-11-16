@@ -25,9 +25,9 @@
     <arg name="rob_rpy" value="$(arg rob_rpy)"/>
   </include>
 
-  <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot2.launch">
+  <!-- <include file="$(find moveit_config_ur5)/launch/moveit_rviz_robot2.launch">
     <arg name="config" value="true"/>
-  </include>
+  </include> -->
 
   <node name="ur5_robot2_planning" pkg="ur5_planning" type="ur5_robot2_move_group" respawn="false" output="screen"/>
 

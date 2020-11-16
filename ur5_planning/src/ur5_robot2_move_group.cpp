@@ -37,7 +37,7 @@ void Move_Group_Robot_2::perform_actions(const std_msgs::String& msg)
 {
   if(msg.data.compare("start_robot_initialization") == 0)
   {
-    std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
+    std::vector<double> target_joint_angles = {1.51844, -1.53589, 1.51844, -1.58825, -1.58825, 0.0001};
     move_to_configuration(target_joint_angles);
     send_update("robot_2_intialization_complete");
   }

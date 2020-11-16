@@ -1,0 +1,12 @@
+<launch>
+
+<!-- CHANGE PACKGE NAME HERE -->
+<arg name="package_name" value="deep_learning_model"/>            
+<arg name="package_path" value="$(find deep_learning_model)"/>
+
+
+<!--RQT Node -->
+    <node name="neural_network_classifier" pkg="deep_learning_model" type="deep_learning_classifier.py" output="screen"/>
+
+
+</launch>
