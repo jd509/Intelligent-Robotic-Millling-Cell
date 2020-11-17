@@ -41,7 +41,7 @@ This will start the gazebo with the needed controllers. The initial PID gain hav
 
 The gazebo window should display the robotic cell as follows:
 
-![Gazebo World](https://github.com/jd509/Intelligent-Robotic-Millling-Cell/blob/master/images/iniial_setup.png)
+![Gazebo World](https://github.com/jd509/Intelligent-Robotic-Millling-Cell/blob/master/images/initial_setup.png)
 
 
 Now, open another terminal alongside the gazebo and type the following:
@@ -58,10 +58,11 @@ cd Intelligent_Robotic_Milling_Cell
 source devel/setup.bash
 roslaunch user_interface user_interface.launch
 ```
-## Simulation 
+## Simulation Video
 
-The robotic cell can be excuted which through the simualtion in gazebo
-<iframe width="1280" height="720" src="https://www.youtube.com/embed/IsruGf38qPI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+The simulation video is embedded in the thumbnail below. Please follow the youtube link by clicking on the image.
+
+[![Alt text](https://img.youtube.com/vi/IsruGf38qPI/0.jpg)](https://www.youtube.com/watch?v=IsruGf38qPI)
 
 ## Modules
 - [Process Visualizer](https://github.com/jd509/Intelligent-Robotic-Millling-Cell/tree/master/process_visualizer)
