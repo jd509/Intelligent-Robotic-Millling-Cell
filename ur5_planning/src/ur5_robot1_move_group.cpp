@@ -294,7 +294,7 @@ void Move_Group_Robot_1::place()
   send_update("workpiece_placed");
 
 //  Adding stoppage time after placing
-  ros::Duration(4.0).sleep(); 
+  ros::Duration(3.0).sleep(); 
 
   //For testing
   std::vector<double> target_joint_angles = {-0.0349066, -1.69297,2.0944 ,-1.98968,-1.5708 ,1.29154};

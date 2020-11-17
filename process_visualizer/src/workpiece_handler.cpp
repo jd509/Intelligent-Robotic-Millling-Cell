@@ -11,13 +11,21 @@ Workpiece_Object::Workpiece_Object()
     spawnClient = nh_workpiece.serviceClient<gazebo_msgs::SpawnModel>("/gazebo/spawn_urdf_model");
     attached_to_rob_1 = nh_workpiece.subscribe("/attached_to_rob_1", 1000, &Workpiece_Object::set_rob1_flag, this);
     deleteModelClient = nh_workpiece.serviceClient<gazebo_msgs::DeleteModel>("gazebo/delete_model");
-
+    wp_complete_sub = nh_workpiece.subscribe("/milling_complete", 1000, &Workpiece_Object::milling_completion, this);
 
     robot_model_loader::RobotModelLoader robot_model_loader("ur5_robot1/robot_description");
     kinematic_model_ur5_1 = robot_model_loader.getModel();
     kinematic_state_ur5_1 = robot_state::RobotStatePtr(new robot_state::RobotState(kinematic_model_ur5_1));
 
     joint_model_group = kinematic_model_ur5_1->getJointModelGroup("manipulator");
+}
+
+void Workpiece_Object::milling_completion(const std_msgs::String &msg)
+{
+    std::string wp_index = intToString(current_wp_rob3);
+    std::string model_name = "workpiece_" + wp_index;
+    remove(model_name);
+    current_wp_rob3 = current_wp_rob3 + 2;
 }
 
 int Workpiece_Object::getIndex(std::vector<std::string> v, std::string K)
@@ -131,15 +139,25 @@ void Workpiece_Object::set_rob1_flag(const std_msgs::String& msg)
         std::string wp_index = intToString(current_wp_rob2);
         std::string model_name = "workpiece_" + wp_index;
         geometry_msgs::Pose p;
-        p.position.x = bin_1_pos[0][0];
-        p.position.y = bin_1_pos[0][1];
-        p.position.z = bin_1_pos[0][2];
+        if(i == 0 || i==2)
+        {
+            p.position.x = bin_1_pos[i][0];
+            p.position.y = bin_1_pos[i][1];
+            p.position.z = bin_1_pos[i][2];
+        }
+        else
+        {
+            p.position.x = 0.3;
+            p.position.y = -0.7;
+            p.position.z = 0.62;            
+        }    
         p.orientation.w = 1.0;
         p.orientation.x = 0.0;
         p.orientation.y = 0.0;
         p.orientation.z = 0.0;
         spawn_model(model_name, p);
         current_wp_rob2 ++;
+        i = i+1;
     }
 }
 void Workpiece_Object::remove(std::string model_name)

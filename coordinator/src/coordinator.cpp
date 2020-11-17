@@ -10,6 +10,7 @@ Coordinator::Coordinator()
     coord_to_gazebo_pub = nh_coord.advertise<geometry_msgs::Pose>("/initial_workpiece_pos", 1000);
     rob_1_attachment_pub = nh_coord.advertise<std_msgs::String>("/attached_to_rob_1", 1000);
     milling_path_wp_pub = nh_coord.advertise<std_msgs::String>("/open_millpath_gui", 1000);
+    complete_wp  = nh_coord.advertise<std_msgs::String>("/milling_complete", 1000);
 
     rob_1_sub = nh_coord.subscribe("/rob1_to_coord", 1000, &Coordinator::rob1_callback, this);
     rob_2_sub = nh_coord.subscribe("/rob2_to_coord", 1000, &Coordinator::rob2_callback, this);
@@ -108,6 +109,13 @@ void Coordinator::rob3_callback(const std_msgs::String& str)
         std::cout<<"###################################### \n";
         send_update_to_gui("All robots initialized");
     }
+    else if(str.data.compare("milling_complete") == 0)
+    {
+        send_update_to_gui("milling_complete");
+        std_msgs::String msg;
+        msg.data = "milling_complete";
+        complete_wp.publish(msg);        
+    }
 }
 
 void Coordinator::gui_callback(const std_msgs::String& str)
@@ -165,7 +173,7 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         classification_label = service_msg.response.class_label;
         std::cout<<classification_label;
         send_update_to_gui(class_label[i]);
-        i++;
+        // i++;
     }
     else if(str.data.compare("pick_workpiece_rob2")==0)
     {
@@ -182,8 +190,9 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         std::cout<<"Initializing Pickup by Robot 2 \n";
         std::cout<<"###################################### \n";
         std_msgs::String pick_msg;
-        pick_msg.data = classification_label;;
+        pick_msg.data = class_label[i];
         command_rob_2_pub.publish(pick_msg);
+        i++;
     }
     else if(str.data.compare("load_milling_plan")==0)
     {
@@ -194,8 +203,16 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         millplan_msg.data = "workpiece";
         milling_path_wp_pub.publish(millplan_msg);
     }
-    
-    
+
+    else if(str.data.compare("execute_milling")==0)
+    {
+        std::cout<<"###################################### \n";
+        std::cout<<"Loading Milling Plan \n";
+        std::cout<<"###################################### \n";
+        std_msgs::String millplan_msg;
+        millplan_msg.data = "execute_milling";
+        command_rob_3_pub.publish(millplan_msg);
+    }    
     
 }
 

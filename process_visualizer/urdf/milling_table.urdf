@@ -27,4 +27,8 @@
     <child link="milling_table_origin"/>
   </joint>
 
+  <gazebo reference="milling_table_origin">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
 </robot>

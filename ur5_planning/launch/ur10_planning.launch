@@ -1,6 +1,6 @@
 <launch>
 
- <arg name="rob_xyz" value="'1.0 0.7 0.31'"/>
+ <arg name="rob_xyz" value="'-0.4 -0.7 0.31'"/>
  <arg name="rob_rpy" value="'0.0 0.0 0.0'"/>
 
  <group ns="ur10_robot">

@@ -36,5 +36,9 @@
     <child link="workpiece_origin"/>
   </joint>
 
+  <gazebo reference="workpiece_origin">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
 
 </robot>

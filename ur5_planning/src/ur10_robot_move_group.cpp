@@ -33,7 +33,7 @@ Move_Group_Robot_3::Move_Group_Robot_3()
 
     workpiece_position[0]  = 0.3;
     workpiece_position[1]  = -0.7;
-    workpiece_position[2]  = 0.7;
+    workpiece_position[2]  = 0.62;
     world_to_part_T = hom_T(workpiece_position, rotation);
 
 }
@@ -147,6 +147,7 @@ void Move_Group_Robot_3::move_to_pose(geometry_msgs::Pose target_p)
 {
   moveit_msgs::PlanningScene planning_scene;
   ur10_robot_group_ptr->setStartStateToCurrentState();
+  ur10_robot_group_ptr->setMaxVelocityScalingFactor(0.01);
   geometry_msgs::Pose start_pose;
   start_pose = ur10_robot_group_ptr->getCurrentPose().pose;
   std::cout<<"Start Pose: "<<start_pose;
@@ -166,6 +167,45 @@ void Move_Group_Robot_3::perform_milling()
 {
     Eigen::MatrixXd waypoints = file_read_mat("/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/src/milling_path_visualizer/data/waypoints.csv");
     Eigen::MatrixXd transformed_pts = apply_transformation(waypoints, world_to_part_T);
+
+    //Go to mill position
+    geometry_msgs::Pose target_pose; 
+    target_pose = ur10_robot_group_ptr->getCurrentPose().pose;
+    target_pose.position.x = transformed_pts(0,0);
+    target_pose.position.y = transformed_pts(0,1);
+    target_pose.position.z = transformed_pts(0,2);
+    std::cout<<"Target Pose: "<<target_pose;
+    move_to_pose(target_pose);
+    ur10_robot_group_ptr->setStartStateToCurrentState();
+
+
+    //execute milling
+    for(size_t i =1; i<transformed_pts.rows(); i++)
+    {
+      geometry_msgs::Pose target_pose; 
+      target_pose = ur10_robot_group_ptr->getCurrentPose().pose;
+      target_pose.position.x = transformed_pts(i,0);
+      target_pose.position.y = transformed_pts(i,1);
+      target_pose.position.z = transformed_pts(i,2);
+      std::cout<<"Target Pose: "<<target_pose;
+      move_to_pose(target_pose);
+      ur10_robot_group_ptr->setStartStateToCurrentState();
+    }
+
+    //retract
+    geometry_msgs::Pose target_pose_2; 
+    target_pose = ur10_robot_group_ptr->getCurrentPose().pose;
+    target_pose.position.z = target_pose.position.z + 0.1;
+    std::cout<<"Target Pose: "<<target_pose;
+    move_to_pose(target_pose);
+    ur10_robot_group_ptr->setStartStateToCurrentState();
+
+    //go to initial state
+    std::vector<double> target_joint_angles = {-0.0349066, -1.69297,2.0944 ,-1.98968,-1.5708 ,1.29154};
+    move_to_configuration(target_joint_angles);
+
+    send_update("milling_complete");
+
 }
 
 void Move_Group_Robot_3::move_to_configuration(std::vector<double>& joint_angles)

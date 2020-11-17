@@ -173,7 +173,7 @@ void Move_Group_Robot_2::place_bin1()
 
   send_update("workpiece_placed");
 //  Adding stoppage time after placing
-  ros::Duration(4.0).sleep(); 
+  ros::Duration(3.0).sleep(); 
 
 
   //pre-retract pos
@@ -226,7 +226,11 @@ void Move_Group_Robot_2::place_bin2()
 void Move_Group_Robot_2::place_fr_milling()
 {
   double x = 0.3, y = -0.7, z=0.6; //location for placing on milling table
-  
+  //pre place location
+  std::vector<double> target_joint_angles1 = {2.93215, -1.53589, 1.51844, -1.58825, -1.58825, 0.0001};
+  move_to_configuration(target_joint_angles1);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
   //pre place location
   geometry_msgs::Pose target_pose;
   target_pose = ur5_robot2_group_ptr->getCurrentPose().pose;

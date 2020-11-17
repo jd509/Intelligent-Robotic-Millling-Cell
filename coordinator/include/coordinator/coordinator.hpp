@@ -38,6 +38,7 @@ class Coordinator
     ros::Publisher coord_to_gazebo_pub;
     ros::Publisher rob_1_attachment_pub;
     ros::Publisher milling_path_wp_pub;
+    ros::Publisher complete_wp;
     
     ros::Subscriber rob_1_sub;
     ros::Subscriber rob_2_sub;
@@ -53,7 +54,7 @@ class Coordinator
     Coordinator();
     int i = 0; //for debugging
 
-    std::vector<std::string> class_label = {"Crazing", "Inclusion", "No_Defect"};
+    std::vector<std::string> class_label = {"Crazing", "No_Defect", "Inclusion","No_Defect"};
 
     void initialize_robots();
 

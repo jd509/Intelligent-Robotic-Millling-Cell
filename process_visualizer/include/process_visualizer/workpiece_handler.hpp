@@ -39,6 +39,12 @@ public:
     int num_of_workpieces_rob1 = 0;
     int current_wp_rob1 = 0;
     int current_wp_rob2 = 0;
+    int current_wp_rob3 = 1;
+
+    int i = 0;
+    std::vector<std::vector<double>> bin_1_pos = {{1.53, -0.43, 0.56},{1.53, -0.6, 0.56}, {1.53, -0.85, 0.56},{1.53, -0.97, 0.56}};
+    std::vector<std::vector<double>> bin_2_pos = {{1.53, -0.85, 0.56},{1.53, -0.97, 0.56}};
+
 
     //Publishers and Subscribers
     ros::Publisher gazebo_model_state_pub;
@@ -46,6 +52,7 @@ public:
     ros::Subscriber joint_states_robot2_sub;
     ros::Subscriber initial_workpiece_pos_sub;
     ros::Subscriber attached_to_rob_1;
+    ros::Subscriber wp_complete_sub;
 
     ros::ServiceClient spawnClient;
     ros::ServiceClient deleteModelClient; 
@@ -57,9 +64,6 @@ public:
 
     tf::TransformListener listener;
     gazebo_msgs::LinkStates state;
-
-    std::vector<std::vector<double>> bin_1_pos = {{1.53, -0.43, 0.56},{1.53, -0.6, 0.56}};
-    std::vector<std::vector<double>> bin_2_pos = {{1.53, -0.85, 0.56},{1.53, -0.97, 0.56}};
 
 
     //Constructor and other functions
@@ -80,6 +84,9 @@ public:
     void remove(std::string model_name);
 
     void spawn_model(std::string model_name, geometry_msgs::Pose p);
+
+    void milling_completion(const std_msgs::String & );
+
 };
 
 
