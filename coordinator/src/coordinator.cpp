@@ -172,7 +172,7 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         std::cout<<"service called \n";
         classification_label = service_msg.response.class_label;
         std::cout<<classification_label;
-        send_update_to_gui(class_label[i]);
+        send_update_to_gui(classification_label);
         // i++;
     }
     else if(str.data.compare("pick_workpiece_rob2")==0)
@@ -190,7 +190,7 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         std::cout<<"Initializing Pickup by Robot 2 \n";
         std::cout<<"###################################### \n";
         std_msgs::String pick_msg;
-        pick_msg.data = class_label[i];
+        pick_msg.data = classification_label;
         command_rob_2_pub.publish(pick_msg);
         i++;
     }
