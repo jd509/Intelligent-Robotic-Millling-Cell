@@ -9,6 +9,7 @@ Coordinator::Coordinator()
     send_update_pub = nh_coord.advertise<std_msgs::String>("/coord_to_gui", 1000);
     coord_to_gazebo_pub = nh_coord.advertise<geometry_msgs::Pose>("/initial_workpiece_pos", 1000);
     rob_1_attachment_pub = nh_coord.advertise<std_msgs::String>("/attached_to_rob_1", 1000);
+    milling_path_wp_pub = nh_coord.advertise<std_msgs::String>("/open_millpath_gui", 1000);
 
     rob_1_sub = nh_coord.subscribe("/rob1_to_coord", 1000, &Coordinator::rob1_callback, this);
     rob_2_sub = nh_coord.subscribe("/rob2_to_coord", 1000, &Coordinator::rob2_callback, this);
@@ -184,6 +185,16 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         pick_msg.data = classification_label;;
         command_rob_2_pub.publish(pick_msg);
     }
+    else if(str.data.compare("load_milling_plan")==0)
+    {
+        std::cout<<"###################################### \n";
+        std::cout<<"Loading Milling Plan \n";
+        std::cout<<"###################################### \n";
+        std_msgs::String millplan_msg;
+        millplan_msg.data = "workpiece";
+        milling_path_wp_pub.publish(millplan_msg);
+    }
+    
     
     
 }

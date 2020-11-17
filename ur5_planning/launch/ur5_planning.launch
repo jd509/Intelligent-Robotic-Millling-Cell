@@ -12,5 +12,6 @@
 <!--Node to spawn workpieces-->
   <node name="workpiece_handler" pkg="process_visualizer" type="workpiece_handler" output="screen"/>
 
+  <include file="$(find milling_path_visualizer)/launch/milling_path_generator.launch"/>
 
 </launch>

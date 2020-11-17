@@ -37,6 +37,7 @@ class Coordinator
     ros::Publisher send_update_pub;
     ros::Publisher coord_to_gazebo_pub;
     ros::Publisher rob_1_attachment_pub;
+    ros::Publisher milling_path_wp_pub;
     
     ros::Subscriber rob_1_sub;
     ros::Subscriber rob_2_sub;
@@ -65,7 +66,6 @@ class Coordinator
     void rob2_callback(const std_msgs::String& );
 
     void rob3_callback(const std_msgs::String& );
-
 
     void load_workpieces(const std_msgs::Int16& );
 };

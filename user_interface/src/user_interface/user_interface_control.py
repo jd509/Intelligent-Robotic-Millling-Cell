@@ -63,6 +63,10 @@ class MyPlugin(Plugin):
         self._widget.train_model_btn.clicked[bool].connect(self.train_model)
         self._widget.classify_btn.clicked[bool].connect(self.classify_image)
 
+        ##Robot3---------------->
+        self._widget.load_milling_btn.clicked[bool].connect(self.load_milling_plan)
+        self._widget.execute_miling_btn.clicked[bool].connect(self.execute_milling)
+
         #------------------------------------------------
 
         if context.serial_number() > 1:
@@ -106,6 +110,16 @@ class MyPlugin(Plugin):
     def segregate_workpiece(self):
         self.publish_msg_to_coord('segregate_workpiece_rob2')
         pass
+
+    ###Robot 3------>
+    def load_milling_plan(self):
+        self.publish_msg_to_coord('load_milling_plan')
+        pass
+
+    def execute_milling(self):
+        self.publish_msg_to_coord('execute_milling')
+        pass
+
 
     ###Update gui status------->
     def comm_to_gui_callback(self,msg):

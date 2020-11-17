@@ -1,0 +1,9 @@
+<launch>
+<!--node name="echoer" pkg="draping_path_visualizer" type="drape_path.py"/-->
+
+<node name="Pop_MillPath_GUI" pkg="milling_path_visualizer" type="pop_millpath_gui" output="screen"/>
+
+<node name="Millpath_wp_Viz" pkg="milling_path_visualizer" type="load_milling_workpiece" output="screen"/>
+
+<node name="Publish_Milling_Lines" pkg="milling_path_visualizer" type="visualize_pointpath" output="screen"/>
+</launch>

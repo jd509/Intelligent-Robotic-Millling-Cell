@@ -29,8 +29,13 @@ public:
     // Initializing ROS Parameters
     ros::NodeHandle node_handle_rob3;
     std_msgs::String update_msg;
+    Eigen::Matrix3d rotation = Eigen::MatrixXd::Identity(3,3);
+    Eigen::Matrix4d world_to_part_T = Eigen::Matrix4d::Zero(4,4);
     // int workpiece_id = 0;
     // int current_wp = 0;
+
+    Eigen::Vector3d workpiece_position = Eigen::Vector3d::Zero();
+
 
 
     std::string PLANNING_GROUP = "manipulator";
@@ -59,6 +64,9 @@ public:
     ros::Publisher send_update_pub;
     ros::Publisher planning_scene_diff_publisher;
 
+    Eigen::Matrix4d hom_T(Eigen::Vector3d t, Eigen::Matrix3d r);
+
+    //Eigen::MatrixXd make_transformation_mat();
 
     //Functions to perform operations
     Move_Group_Robot_3();
@@ -88,6 +96,10 @@ public:
     void move_to_pose(geometry_msgs::Pose );
 
     void perform_milling();
+
+    Eigen::MatrixXd file_read_mat(std::string file_name);
+
+    Eigen::MatrixXd apply_transformation(Eigen::MatrixXd data, Eigen::Matrix4d T_mat);
 };
 
 

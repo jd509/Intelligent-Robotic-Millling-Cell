@@ -30,6 +30,12 @@ Move_Group_Robot_3::Move_Group_Robot_3()
     send_update_pub = node_handle_rob3.advertise<std_msgs::String>("/rob3_to_coord", 1000);
     planning_scene_diff_publisher = node_handle_rob3.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
     // workpiece_pos_sub = node_handle_rob1.subscribe("/initial_workpiece_pos", 1000, &Move_Group_Robot_1::add_workpieces, this);
+
+    workpiece_position[0]  = 0.3;
+    workpiece_position[1]  = -0.7;
+    workpiece_position[2]  = 0.7;
+    world_to_part_T = hom_T(workpiece_position, rotation);
+
 }
 
 void Move_Group_Robot_3::send_update(std::string msg)
@@ -60,8 +66,82 @@ void Move_Group_Robot_3::perform_actions(const std_msgs::String& msg)
     // add_workpiece_table();
     // add_workpiece_table_2();
   }
+  if(msg.data.compare("execute_milling")==  0)
+  {
+      perform_milling();
+  }
 }
 
+Eigen::Matrix4d Move_Group_Robot_3::hom_T(Eigen::Vector3d t, Eigen::Matrix3d r)
+{
+    Eigen::Matrix4d T;
+    T.block(0,3,3,1) << t;
+    T.block(0,0,3,3) << r;
+    T.block(3,0,1,4) << 0,0,0,1;
+    return T;
+}
+
+Eigen::MatrixXd Move_Group_Robot_3::file_read_mat(std::string file_name)
+{
+    std::string tok;
+    std::vector <std::vector <double> > vec;
+    std::string line;
+    std::string item;
+    std::ifstream input_file;
+    std::ifstream infile(file_name);
+    if (infile.good())
+    {
+        input_file.open(file_name.c_str(),std::ios::in);
+        while(!input_file.eof())
+        {
+            getline(input_file, line);
+            if (!line.empty())
+            {
+                std::istringstream in(line);
+                std::vector <double> row_vec;
+                while (getline(in, item, ',')) 
+                {
+                    row_vec.push_back(atof(item.c_str()));
+                }
+                vec.push_back(row_vec);
+            }
+        }
+        input_file.close();
+    }
+    else
+    {
+        std::cerr << "File/Path does not exist" << std::endl;
+    }
+    if (vec.size()!=0)
+    {   
+        Eigen::MatrixXd mat(vec.size(), vec[0].size());
+        for (int i = 0; i < vec.size(); ++i)
+        {
+            mat.row(i) = Eigen::VectorXd::Map(&vec[i][0], vec[0].size());
+        }
+        return mat;
+    }
+    else
+    {
+        Eigen::MatrixXd mat(0,0);
+        return mat;
+    }
+} 
+
+Eigen::MatrixXd Move_Group_Robot_3::apply_transformation(Eigen::MatrixXd data, Eigen::Matrix4d T_mat)
+{
+    //!NOTE: Homogeneous Tranformation Matrix (4x4)
+
+    //! putting data in [x, y, z, 1]' format
+    Eigen::MatrixXd data_with_fourth_row(data.cols()+1,data.rows());
+    Eigen::VectorXd ones_vec = Eigen::VectorXd::Constant(data.rows(),1);
+    data_with_fourth_row.block(0,0,data.cols(),data.rows()) = data.transpose();
+    data_with_fourth_row.block(data.cols(),0,1,data.rows()) = ones_vec.transpose();
+    Eigen::MatrixXd transformed_data = T_mat*data_with_fourth_row;
+    Eigen::MatrixXd transformed_data_mat(transformed_data.rows()-1,transformed_data.cols());
+    transformed_data_mat = transformed_data.block(0,0,transformed_data.rows()-1,transformed_data.cols());
+    return transformed_data_mat.transpose();
+}
 
 void Move_Group_Robot_3::move_to_pose(geometry_msgs::Pose target_p)
 {
@@ -82,7 +162,11 @@ void Move_Group_Robot_3::move_to_pose(geometry_msgs::Pose target_p)
 
 }
 
-
+void Move_Group_Robot_3::perform_milling()
+{
+    Eigen::MatrixXd waypoints = file_read_mat("/home/jaineel/Desktop/AME_547_Project/Jaineel/Jaineel_WS_New/src/milling_path_visualizer/data/waypoints.csv");
+    Eigen::MatrixXd transformed_pts = apply_transformation(waypoints, world_to_part_T);
+}
 
 void Move_Group_Robot_3::move_to_configuration(std::vector<double>& joint_angles)
 {
