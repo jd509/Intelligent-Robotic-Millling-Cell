@@ -4,6 +4,9 @@
 
   <include file="$(find ur5_planning)/launch/ur5_robot2_planning.launch"/>
 
+  <include file="$(find ur5_planning)/launch/ur10_planning.launch"/>
+
+
   <include file="$(find coordinator)/launch/coordinator.launch"/>
 
 <!--Node to spawn workpieces-->

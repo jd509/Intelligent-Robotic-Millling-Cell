@@ -5,12 +5,14 @@ Coordinator::Coordinator()
 {
     command_rob_1_pub = nh_coord.advertise<std_msgs::String>("/command_rob_1", 1000);
     command_rob_2_pub = nh_coord.advertise<std_msgs::String>("/command_rob_2", 1000);
+    command_rob_3_pub = nh_coord.advertise<std_msgs::String>("/command_rob_3", 1000);
     send_update_pub = nh_coord.advertise<std_msgs::String>("/coord_to_gui", 1000);
     coord_to_gazebo_pub = nh_coord.advertise<geometry_msgs::Pose>("/initial_workpiece_pos", 1000);
     rob_1_attachment_pub = nh_coord.advertise<std_msgs::String>("/attached_to_rob_1", 1000);
 
     rob_1_sub = nh_coord.subscribe("/rob1_to_coord", 1000, &Coordinator::rob1_callback, this);
     rob_2_sub = nh_coord.subscribe("/rob2_to_coord", 1000, &Coordinator::rob2_callback, this);
+    rob_3_sub = nh_coord.subscribe("/rob3_to_coord", 1000, &Coordinator::rob3_callback, this);
     gui_msgs_sub = nh_coord.subscribe("/gui_to_coord", 1000, &Coordinator::gui_callback, this);
     num_of_wp_sub = nh_coord.subscribe("/num_wp", 1000, &Coordinator::load_workpieces, this);
 
@@ -78,7 +80,7 @@ void Coordinator::rob2_callback(const std_msgs::String& str)
         std::cout<<"###################################### \n";
         std::cout<<"Robot 2 initialized \n";
         std::cout<<"###################################### \n";
-        send_update_to_gui("All robots initialized");
+        // send_update_to_gui("All robots initialized");
     }
     else if(str.data.compare("attached_rob2") == 0)
     {
@@ -96,6 +98,17 @@ void Coordinator::rob2_callback(const std_msgs::String& str)
     }
 }
 
+void Coordinator::rob3_callback(const std_msgs::String& str)
+{
+    if(str.data.compare("robot_3_intialization_complete") == 0)
+    {
+        std::cout<<"###################################### \n";
+        std::cout<<"Robot 3 initialized \n";
+        std::cout<<"###################################### \n";
+        send_update_to_gui("All robots initialized");
+    }
+}
+
 void Coordinator::gui_callback(const std_msgs::String& str)
 {
     if(str.data.compare("initialize_robots") == 0)
@@ -107,6 +120,7 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         all_rob_msg.data = "start_robot_initialization";
         command_rob_1_pub.publish(all_rob_msg);
         command_rob_2_pub.publish(all_rob_msg);
+        command_rob_3_pub.publish(all_rob_msg);
     }
 
     else if (str.data.compare("approach_and_pick_workpiece_rob1")==0)
@@ -149,7 +163,8 @@ void Coordinator::gui_callback(const std_msgs::String& str)
         std::cout<<"service called \n";
         classification_label = service_msg.response.class_label;
         std::cout<<classification_label;
-        send_update_to_gui(classification_label);
+        send_update_to_gui(class_label[i]);
+        i++;
     }
     else if(str.data.compare("pick_workpiece_rob2")==0)
     {

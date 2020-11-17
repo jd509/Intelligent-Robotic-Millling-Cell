@@ -42,6 +42,7 @@ void Move_Group_Robot_2::perform_actions(const std_msgs::String& msg)
     std::vector<double> target_joint_angles = {1.51844, -1.53589, 1.51844, -1.58825, -1.58825, 0.0001};
     move_to_configuration(target_joint_angles);
     send_update("robot_2_intialization_complete");
+    //place_fr_milling();
   }
   if(msg.data.compare("start_pickup_rob2")==0)
   {
@@ -57,7 +58,7 @@ void Move_Group_Robot_2::perform_actions(const std_msgs::String& msg)
   }
   if(msg.data.compare("No_Defect")==0)
   {
-    //place_fr_milling();
+    place_fr_milling();
   }
 }
 
@@ -222,6 +223,41 @@ void Move_Group_Robot_2::place_bin2()
   bin2_wp ++;
 }
 
+void Move_Group_Robot_2::place_fr_milling()
+{
+  double x = 0.3, y = -0.7, z=0.6; //location for placing on milling table
+  
+  //pre place location
+  geometry_msgs::Pose target_pose;
+  target_pose = ur5_robot2_group_ptr->getCurrentPose().pose;
+  target_pose.position.x = x;
+  target_pose.position.y = y;
+  target_pose.position.z = z + 0.2;
+  std::cout<<"Target Pose: "<<target_pose;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  //place position
+  target_pose.position.z = z + 0.05;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  send_update("workpiece_placed");
+//  Adding stoppage time after placing
+  ros::Duration(4.0).sleep(); 
+
+
+  //pre-retract pos
+  target_pose.position.z = z + 0.2;
+  move_to_pose(target_pose);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+  //Retract
+  std::vector<double> target_joint_angles = {1.51844, -1.53589, 1.51844, -1.58825, -1.58825, 0.0001};
+  move_to_configuration(target_joint_angles);
+  ur5_robot2_group_ptr->setStartStateToCurrentState();
+
+}
 
 void Move_Group_Robot_2::move_to_configuration(std::vector<double>& joint_angles)
 {

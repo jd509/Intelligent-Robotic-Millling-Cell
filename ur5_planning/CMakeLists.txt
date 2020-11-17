@@ -242,3 +242,6 @@ target_link_libraries(ur5_robot1_move_group ${catkin_LIBRARIES})
 
 add_executable(ur5_robot2_move_group src/ur5_robot2_move_group.cpp)
 target_link_libraries(ur5_robot2_move_group ${catkin_LIBRARIES})
+
+add_executable(ur10_robot_move_group src/ur10_robot_move_group.cpp)
+target_link_libraries(ur10_robot_move_group ${catkin_LIBRARIES})

@@ -33,12 +33,14 @@ class Coordinator
     //Ros Publishers
     ros::Publisher command_rob_1_pub;
     ros::Publisher command_rob_2_pub;
+    ros::Publisher command_rob_3_pub;
     ros::Publisher send_update_pub;
     ros::Publisher coord_to_gazebo_pub;
     ros::Publisher rob_1_attachment_pub;
     
     ros::Subscriber rob_1_sub;
     ros::Subscriber rob_2_sub;
+    ros::Subscriber rob_3_sub;
     ros::Subscriber gui_msgs_sub;
     ros::Subscriber num_of_wp_sub;
 
@@ -48,6 +50,9 @@ class Coordinator
     
     //Constructors and other functions
     Coordinator();
+    int i = 0; //for debugging
+
+    std::vector<std::string> class_label = {"Crazing", "Inclusion", "No_Defect"};
 
     void initialize_robots();
 
@@ -58,6 +63,9 @@ class Coordinator
     void rob1_callback(const std_msgs::String& );
 
     void rob2_callback(const std_msgs::String& );
+
+    void rob3_callback(const std_msgs::String& );
+
 
     void load_workpieces(const std_msgs::Int16& );
 };

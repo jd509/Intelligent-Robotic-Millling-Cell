@@ -22,6 +22,9 @@
 <!-- Spawn a table for robot 1 into Gazebo -->
   <node name="spawn_urdf_robot_table2" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_table.urdf -urdf -x 0.87 -y -0.83 -z 0.005 -model robot_table_2" />
 
+<!-- Spawn a table for robot 1 into Gazebo -->
+  <node name="spawn_urdf_robot_table3" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/robot_table.urdf -urdf -x -0.82 -y -0.83 -z 0.005 -model robot_table_3" />
+
 <!--Spawn a table for workpiece near robot 1 to pick up-->
   <node name="spawn_urdf_workpiece_table1" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece_table.urdf -urdf -x 1.28 -y 0.53 -z 0.005 -model workpiece_table_1" />
 
@@ -39,6 +42,9 @@
 
 <!--Spawn a bin 1 for workpiece near robot 1 to pick up-->
   <node name="spawn_urdf_bin2" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/bin.urdf -urdf -x 1.45 -y -0.65 -z 0.55 -model bin_2" />
+
+<!--Spawn a bin 1 for workpiece near robot 1 to pick up-->
+  <node name="spawn_urdf_milling_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/milling_table.urdf -urdf -x 0.3 -y -0.7 -z 0.6 -model milling_table" />
 
 <!--row 1-->
   <!-- <node name="spawn_urdf_wp" pkg="gazebo_ros" type="spawn_model" args="-file $(find process_visualizer)/urdf/workpiece.urdf -urdf -x 1.53 -y -0.6 -z 0.56 -model workpiece" />
@@ -80,6 +86,14 @@
       <include file="$(find ur_gazebo)/launch/ur5.launch">
         <arg name="init_pose" value="-x 1 -y -0.7 -z 0.31"/>
         <arg name="robot_name" value="ur5_robot2"/>
+      </include>
+    </group>
+
+  <group ns="ur10_robot">
+    <param name="tf_prefix" value="ur10_robot_tf" />
+      <include file="$(find ur_gazebo)/launch/ur10.launch">
+        <arg name="init_pose" value="-x -0.7 -y -0.7 -z 0.31"/>
+        <arg name="robot_name" value="ur10_robot"/>
       </include>
     </group>
 
