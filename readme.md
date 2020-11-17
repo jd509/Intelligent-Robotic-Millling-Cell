@@ -41,7 +41,7 @@ This will start the gazebo with the needed controllers. The initial PID gain hav
 
 The gazebo window should display the robotic cell as follows:
 
-![Gazebo World](https://github.com/jd509/Intelligent-Robotic-Millling-Cell/blob/master/images/initial_setup.png)
+![Gazebo World](https://github.com/jd509/Intelligent-Robotic-Millling-Cell/blob/master/images/intial_setup.png)
 
 
 Now, open another terminal alongside the gazebo and type the following:
