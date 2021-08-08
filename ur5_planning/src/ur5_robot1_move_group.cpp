@@ -12,12 +12,7 @@ Move_Group_Robot_1::Move_Group_Robot_1()
     joint_names = joint_model_group->getVariableNames();
     link_names = joint_model_group->getLinkModelNames();
 
-    // ur5_robot1_group_ptr->setGoalJointTolerance(0.1);
-    // ur5_robot1_group_ptr->setGoalPositionTolerance(0.1);
-    // ur5_robot1_group_ptr->setGoalOrientationTolerance(0.1);
-
     ur5_robot1_group_ptr->setGoalTolerance(0.01);
-    // ur5_robot1_group_ptr->setPlanningTime(5.0);
     ur5_robot1_group_ptr->allowReplanning(true);
 
     for(auto i:joint_names)
@@ -54,11 +49,6 @@ void Move_Group_Robot_1::perform_actions(const std_msgs::String& msg)
     moveit_msgs::PlanningScene planning_scene;
 
     send_update("robot_1_intialization_complete");
-
-    //Adding other collision objects to world after initialization
-    // add_robot_table();
-    // add_workpiece_table();
-    // add_workpiece_table_2();
   }
   else if(msg.data.compare("start_pickup_rob1")==0)
   {

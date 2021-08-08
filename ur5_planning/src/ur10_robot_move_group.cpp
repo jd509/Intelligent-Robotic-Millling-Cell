@@ -12,10 +12,6 @@ Move_Group_Robot_3::Move_Group_Robot_3()
     joint_names = joint_model_group->getVariableNames();
     link_names = joint_model_group->getLinkModelNames();
 
-    // ur5_robot1_group_ptr->setGoalJointTolerance(0.1);
-    // ur5_robot1_group_ptr->setGoalPositionTolerance(0.1);
-    // ur5_robot1_group_ptr->setGoalOrientationTolerance(0.1);
-
     ur10_robot_group_ptr->setGoalTolerance(0.01);
     // ur5_robot1_group_ptr->setPlanningTime(5.0);
     ur10_robot_group_ptr->allowReplanning(true);
@@ -60,11 +56,6 @@ void Move_Group_Robot_3::perform_actions(const std_msgs::String& msg)
     moveit_msgs::PlanningScene planning_scene;
 
     send_update("robot_3_intialization_complete");
-
-    //Adding other collision objects to world after initialization
-    // add_robot_table();
-    // add_workpiece_table();
-    // add_workpiece_table_2();
   }
   if(msg.data.compare("execute_milling")==  0)
   {

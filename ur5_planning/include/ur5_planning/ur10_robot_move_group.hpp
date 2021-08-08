@@ -66,30 +66,14 @@ public:
 
     Eigen::Matrix4d hom_T(Eigen::Vector3d t, Eigen::Matrix3d r);
 
-    //Eigen::MatrixXd make_transformation_mat();
-
     //Functions to perform operations
     Move_Group_Robot_3();
     
     void move_to_configuration(std::vector<double>& joint_angles);
 
-    // void add_robot_table();
-
-    // void add_workpiece_table();
-
-    // void add_workpiece_table_2();
-
     void send_update(std::string );
 
     void perform_actions(const std_msgs::String& );
-
-    // void add_collision_obj_to_world(moveit_msgs::CollisionObject object, std::string object_name);
-
-    // void add_workpieces(const geometry_msgs::Pose& );
-
-    // void pick();
-
-    // void place();
 
     std::string intToString (int a);
 

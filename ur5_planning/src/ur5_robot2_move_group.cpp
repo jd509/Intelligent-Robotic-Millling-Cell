@@ -16,8 +16,6 @@ Move_Group_Robot_2::Move_Group_Robot_2()
     {
       std::cout<<"Joint Name: "<<i<<std::endl;
     }
-    // std::vector<double> target_joint_angles = {0.8157, -1.7009, -1.9787, -2.5341, 1.6315, -0.1041};
-    // move_to_configuration(target_joint_angles);
     ur5_robot2_group_ptr->setGoalTolerance(0.01);
     ur5_robot2_group_ptr->allowReplanning(true);
     //ROS publishers and subscribers
